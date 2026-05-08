@@ -1,0 +1,38 @@
+<div class="cart-icon" (click)="toggleCart()">
+  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" width="36" height="36">
+    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13l-1.35 2.7A1 1 0 007.5 17h9a1 1 0 00.85-1.53L17 13M7 13V6a1 1 0 011-1h5a1 1 0 011 1v7" />
+  </svg>
+  @if((cartCount$ | async)?? 0 > 0){
+    <span class="cart-badge" >{{ cartCount$ | async }}</span>
+  }
+</div>
+
+@if (showCart) {
+  <div class="cart-overlay" (click)="toggleCart()"></div>
+  <div class="cart-panel">
+    <h3>Carrello</h3>
+    <ul>
+      @for (item of (cartItems$ | async) ?? []; track item.pizza.id) {
+        <li class="cart-row">
+          <span>{{ item.pizza.name }} x{{ item.quantity }} - {{ (item.pizza.price * item.quantity) | currency:'EUR':'symbol':'1.2-2' }}</span>
+          <button  class="bg-primary hover:bg-red-600 text-white font-bold py-1 px-2 rounded w-7" title="Rimuovi uno" (click)="decrementItem(item.pizza.id)">-</button>
+          <button class="bg-primary hover:bg-red-600 text-white font-bold py-1 px-2 rounded w-7 flex items-center justify-center" title="Rimuovi tutto" (click)="removeItem(item.pizza.id)">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24" width="16" height="16">
+              <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
+            </svg>
+          </button>
+        </li>
+      }
+    </ul>
+    <div class="mt-4 text-center">
+      <button class="button rounded-full" (click)="toggleCart()">Chiudi</button>&nbsp;
+      <button class="button rounded-full" routerLink="/menu" (click)="toggleCart()">Menù</button>&nbsp;
+      <button class="button rounded-full" routerLink="/summary" (click)="toggleCart()">Ordina</button>
+
+    </div>
+  </div>
+}
+
+@if (feedbackText) {
+  <div class="feedback-popup">{{ feedbackText }}</div>
+}

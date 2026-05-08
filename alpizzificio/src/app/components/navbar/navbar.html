@@ -1,0 +1,36 @@
+<nav class="navbar-main">
+  <!-- Logo -->
+  <div class="navbar-logo">
+    <img src="/logo.png" alt="Logo" class="navbar-logo-img h-30" />
+    <span class="navbar-logo-text">AlPizzificio</span>
+  </div>
+
+  <!-- Menu desktop -->
+  <ul class="navbar-menu">
+    <li><a routerLink="">Home</a></li>
+    <li><a routerLink="/menu">Menu</a></li>
+    <li><a routerLink="/about">Chi Siamo</a></li>
+    <li><a routerLink="/summary">Riepilogo</a></li>
+  </ul>
+</nav>
+
+<!-- Burger mobile icon -->
+<div class="burger-icon" (click)="toggleMenu()">
+  <span [class.open]="menuOpen"></span>
+  <span [class.open]="menuOpen"></span>
+  <span [class.open]="menuOpen"></span>
+</div>
+
+<!-- Overlay mobile -->
+<div class="mobile-overlay" *ngIf="menuOpen" (click)="toggleMenu()"></div>
+
+<!-- Sidebar mobile -->
+<aside class="mobile-sidebar" [class.open]="menuOpen">
+  <button class="close-btn" (click)="toggleMenu()">&times;</button>
+  <ul>
+    <li><a routerLink="" (click)="toggleMenu()">Home</a></li>
+    <li><a routerLink="/menu" (click)="toggleMenu()">Menu</a></li>
+    <li><a routerLink="/about" (click)="toggleMenu()">Chi Siamo</a></li>
+    <li><a routerLink="/summary" (click)="toggleMenu()">Riepilogo</a></li>
+  </ul>
+</aside>

@@ -1,0 +1,26 @@
+[
+  {
+    "id": 1,
+    "name": "Margherita",
+    "description": "Pomodoro, mozzarella, basilico",
+    "price": 6.50
+  },
+  {
+    "id": 2,
+    "name": "Diavola",
+    "description": "Pomodoro, mozzarella, salamino piccante",
+    "price": 8.00
+  },
+  {
+    "id": 3,
+    "name": "Capricciosa",
+    "description": "Pomodoro, mozzarella, prosciutto cotto, funghi, carciofini",
+    "price": 9.00
+  },
+  {
+    "id": 4,
+    "name": "Quattro Formaggi",
+    "description": "Mozzarella, gorgonzola, fontina, parmigiano",
+    "price": 9.50
+  }
+]

@@ -1,0 +1,43 @@
+/* You can add global styles to this file, and also import other style files */
+
+@import 'tailwindcss';
+@theme {
+  --color-primary: #ad2525;
+  --color-hPrimary: #df2121;
+  --color-tahiti: #3ab7bf;
+  --color-bermuda: #78dcca;
+}
+.background-image {
+    background-image: url('/public/home2.jpg'); /* The image used */
+    background-color: #df2121; /* Used if the image is unavailable */
+    height: 400px; /* You must set a specified height */
+    background-position: center; /* Center the image */
+    background-repeat: no-repeat; /* Do not repeat the image */
+    background-size: cover; /* Resize the background image to cover the entire container */
+}
+  
+@media (max-width: 1250px) {
+   .background-image {
+   background-image: url('/public/home.jpg');
+   background-size: cover;
+   }
+}
+
+.cpage {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+  background-color: antiquewhite;
+}
+
+.button {
+  background: #d1121d;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 8px 16px;
+  cursor: pointer;
+  font-weight: bold;
+  margin-top: 10px;
+}
+

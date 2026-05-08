@@ -1,0 +1,31 @@
+<section class="cpage pt-8 md:pt-0" >
+   <h1 class=" text-center text-4xl">Il Nostro Menu</h1>
+   <div class="flex justify-center px-4 md:px-0">
+      <div class="max-w-lg w-full rounded overflow-hidden shadow-lg bg-white">
+         <div class="px-6 py-4">
+            @if (pizzas$ | async; as pizzas) {
+               @for (pizza of pizzas; track pizza.id) {
+                  <ul class="pizza-list">
+                     <li class="pizza-item">
+                        <div style="display: flex; align-items: center; justify-content: space-between; gap: 1rem;">
+                        <span>
+                           <h3 style="display: inline; margin-right: 1rem;" class="font-bold">{{ pizza.name }} - {{ pizza.price | currency:'EUR':'symbol':'1.2-2' }}</h3>
+                        </span>
+                        <button class="bg-primary hover:bg-hPrimary text-white font-bold py-2 px-4 rounded-full" (click)="addToCart(pizza)">+</button>
+                        </div>
+                        <p>{{ pizza.description }}</p>
+                     </li>
+                  </ul>
+               } @empty {
+                  <ul><li>Nessuna pizza disponibile.</li></ul>
+               }
+            } @else {
+               <p>Caricamento menu...</p>
+            }
+            <div class="mt-4 text-center">
+               <button class="bg-primary hover:bg-hPrimary text-white font-bold py-2 px-4 rounded-full" routerLink="/summary" >Ordina ora</button>
+            </div>
+         </div>
+      </div>
+   </div>
+</section>
