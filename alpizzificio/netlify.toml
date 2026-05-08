@@ -1,5 +1,5 @@
 [build]
-  command = "npx ng build --configuration production"
+  command = "cd alpizzificio && npx ng build --configuration production"
   publish = "dist/alpizzificio/browser"
 
 [build.environment]
