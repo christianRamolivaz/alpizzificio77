@@ -1,9 +1,9 @@
 [build]
   command = "cd alpizzificio && ./node_modules/.bin/ng build"
-  publish = "alpizzificio/dist/alpizzificio/browser"
+  publish = "alpizzificio/dist/alpizzificio"
 
 [build.environment]
   NODE_VERSION = "18"
 
 [dev]
-  publish = "alpizzificio/dist/alpizzificio/browser"
+  publish = "alpizzificio/dist/alpizzificio"
