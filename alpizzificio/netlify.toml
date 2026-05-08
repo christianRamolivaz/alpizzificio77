@@ -1,9 +1,0 @@
-[build]
-  command = "cd alpizzificio && npm run build"
-  publish = "dist/alpizzificio/browser"
-
-[build.environment]
-  NODE_VERSION = "18"
-
-[dev]
-  publish = "dist/alpizzificio/browser"
