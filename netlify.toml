@@ -1,5 +1,5 @@
 [build]
-  command = "cd alpizzificio && ./node_modules/.bin/ng build"
+  command = "cd alpizzificio && npm install && ./node_modules/.bin/ng build"
   publish = "alpizzificio/dist/alpizzificio"
 
 [build.environment]
