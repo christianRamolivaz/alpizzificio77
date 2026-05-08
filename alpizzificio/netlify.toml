@@ -1,9 +1,9 @@
 [build]
-  command = "npm run build"
+  command = "npx ng build --configuration production"
   publish = "dist/alpizzificio/browser"
 
 [build.environment]
   NODE_VERSION = "18"
 
 [dev]
-  publish = "dist/alpizzificio"
+  publish = "dist/alpizzificio/browser"
