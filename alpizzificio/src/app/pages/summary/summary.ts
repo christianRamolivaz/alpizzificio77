@@ -13,9 +13,7 @@ import { FormsModule } from '@angular/forms';
   styleUrl: './summary.css',
 })
 export class Summary {
-  private productService = inject(Product);
   private cartService = inject(CartService);
-  private orderService = inject(OrderService);
 
   indirizzo = signal("");
   fasciaOraria = signal("");
@@ -40,7 +38,6 @@ export class Summary {
     const minutiAttuali = now.getMinutes();
 
     return this.ORARI_BASE.map(orario => {
-      // Estrai l'ora di inizio (prima dello slash)
       const oraInizio = orario.split('/')[0];
       const [ore, minuti] = oraInizio.split(':').map(Number);
       const oraInMinuti = ore * 60 + minuti;
@@ -70,8 +67,6 @@ export class Summary {
   }
 
   private getCartItemPizza(pizzaId: number): Pizza | undefined {
-    // Questo è un helper per ottenere l'oggetto Pizza da un ID
-    // Useremo una variabile locale nel componente
     let pizza: Pizza | undefined;
     this.cartItems$.pipe(take(1)).subscribe(items => {
       const item = items.find(i => i.pizza.id === pizzaId);
@@ -81,24 +76,19 @@ export class Summary {
     });
     return pizza;
   }
-  /**
-   * Restituisce un messaggio formattato per l'ordine da inviare.
-   * @param items Array di CartItem
-   * @param fasciaOraria Fascia oraria dell'ordine
-   * @param indirizzo Indirizzo di consegna
-   */
+
   static formatOrderMessage(items: CartItem[], fasciaOraria: string, indirizzo: string, note: string): string {
     const righe = items.map(item => ` - ${item.quantity} ${item.pizza.name}`);
     return [
       `Ciao! vorrei effettuare il seguente ordine:`,
       ...righe,
-      `orario indicato: ${fasciaOraria}`,
-      `presso: ${indirizzo}`,
+      `Orario indicato: ${fasciaOraria}`,
+      `Presso: ${indirizzo}`,
       note.length > 0 ? (`Note: `+note)
       : ``
     ].join('\n');
   }
-  // Invia l'ordine via WhatsApp
+
   async sendViaWhatsApp() {
     if (!(await this.validateCart())) return;
 
@@ -116,39 +106,6 @@ export class Summary {
     }
   }
 
-  // Invia l'ordine via Email
-  async sendViaEmail() {
-    if (!(await this.validateCart())) return;
-
-    const items = await this.getCartItems();
-    
-    const conferma = window.confirm('Inviare l\'ordine via email?');
-    if (conferma) {
-      const invioRiuscito = await this.orderService.sendOrder(items);
-      
-      if (invioRiuscito) {
-        window.alert('✓ Ordine inviato via email!');
-        this.cartService.clearCart();
-      } else {
-        window.alert('✗ Errore nell\'invio dell\'ordine. Riprova più tardi.');
-      }
-    }
-  }
-
-  // Chiama la pizzeria
-  async callPizzeria() {
-    if (!(await this.validateCart())) return;
-
-    const numeroTelefono = '3514964337';
-    const conferma = window.confirm('Chiamare la pizzeria?');
-    if (conferma) {
-      window.location.href = `tel:+39${numeroTelefono}`;
-      window.alert('✓ Chiamata in corso...');
-      this.cartService.clearCart();
-    }
-  }
-
-  // Helper: valida il carrello
   private async validateCart(): Promise<boolean> {
     const items = await this.getCartItems();
     if (items.length === 0) {
@@ -158,7 +115,6 @@ export class Summary {
     return true;
   }
 
-  // Helper: recupera gli elementi del carrello
   private getCartItems(): Promise<CartItem[]> {
     return this.cartItems$.pipe(map(x => x ?? []), take(1)).toPromise() as Promise<CartItem[]>;
   }
