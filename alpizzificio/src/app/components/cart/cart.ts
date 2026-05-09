@@ -35,6 +35,10 @@ export class CartComponent {
     }, 1200);
   }
 
+  incrementQuantity(pizzaId: number) {
+    this.cartService.addToCart(pizzaId);
+  }
+
   decrementItem(pizzaId: number) {
     this.cartService.decrementQuantity(pizzaId);
     this.showFeedback('Quantità aggiornata');

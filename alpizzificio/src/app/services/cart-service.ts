@@ -10,12 +10,12 @@ export class CartService {
   private items: CartItem[] = [];
   private items$ = new BehaviorSubject<CartItem[]>([]);
 
-  addToCart(pizza: Pizza) {
-    const found = this.items.find(item => item.pizza.id === pizza.id);
+  addToCart(pizza: Pizza | number) {
+    const found = this.items.find(item => item.pizza.id === (typeof pizza === 'number' ? pizza : pizza.id));
     if (found) {
       found.quantity++;
     } else {
-      this.items.push({ pizza, quantity: 1, note: "" });
+      this.items.push({ pizza: typeof pizza === 'number' ? { id: pizza } as Pizza : pizza, quantity: 1, note: "" });
     }
     this.items$.next([...this.items]);
   }
