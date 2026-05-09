@@ -1,10 +1,9 @@
+import { AsyncPipe, CommonModule, CurrencyPipe } from '@angular/common';
 import { Component, inject, signal } from '@angular/core';
-import { CartItem, CartService } from '../../services/cart-service';
-import { Product, Pizza } from '../../services/product';
-import { OrderService } from '../../services/order-service';
-import { map, take } from 'rxjs';
-import { AsyncPipe, CurrencyPipe, CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { map, take } from 'rxjs';
+import { CartItem, CartService } from '../../services/cart-service';
+import { Pizza } from '../../services/product';
 
 @Component({
   selector: 'app-summary',
