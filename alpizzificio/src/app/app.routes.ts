@@ -5,9 +5,9 @@ import { Menu } from './pages/menu/menu';
 import { Summary } from './pages/summary/summary';
 
 export const routes: Routes = [
-  { path: '', component: Home },
+  { path: '', component: Home, title:"Alpizzificio77"},
   { path: 'menu', component: Menu },
-  { path: 'about', component: About },
-  { path: 'summary', component: Summary },
+  { path: 'chi-siamo', component: About },
+  { path: 'riepilogo', component: Summary },
   { path: '**', redirectTo: '' }
 ];
