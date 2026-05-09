@@ -21,6 +21,7 @@ export class Summary {
   fasciaOraria = signal("");
   notesExpanded = signal(false);
   note = signal("");
+  dataConsegna = signal(new Date());
 
   private readonly ORARI_BASE = [
     '19:00/19:30', '19:30/20:00', '20:00/20:30', '20:30/21:00', '21:00/21:30', '21:30/22:00'
@@ -87,7 +88,7 @@ export class Summary {
    * @param indirizzo Indirizzo di consegna
    */
   static formatOrderMessage(items: CartItem[], fasciaOraria: string, indirizzo: string, note: string): string {
-    const righe = items.map(item => `${item.pizza.name} ${item.quantity}`);
+    const righe = items.map(item => ` - ${item.quantity} ${item.pizza.name}`);
     return [
       `Ciao! vorrei effettuare il seguente ordine:`,
       ...righe,
