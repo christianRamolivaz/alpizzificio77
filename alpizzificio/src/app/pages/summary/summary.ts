@@ -106,7 +106,7 @@ export class Summary {
     
     const conferma = window.confirm('Inviare l\'ordine via WhatsApp?');
     if (conferma) {
-      const numeroWhatsApp = '3520244094';
+      const numeroWhatsApp = '+393520244094';
       const messaggioEncodato = encodeURIComponent(msg);
       const urlWhatsApp = `https://wa.me/${numeroWhatsApp}?text=${messaggioEncodato}`;
       window.open(urlWhatsApp, '_blank');
