@@ -5,7 +5,7 @@ import { Menu } from './pages/menu/menu';
 import { Summary } from './pages/summary/summary';
 
 export const routes: Routes = [
-  { path: '', component: About, title:"Alpizzificio77"},
+  { path: '', component: Home, title:"Alpizzificio77"},
   { path: 'home', component: Menu },
   { path: 'menu', component: Menu },
   { path: 'chi-siamo', component: About },

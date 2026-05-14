@@ -6,22 +6,28 @@
             @if ((cartItems$ | async)?.length ?? 0 > 0) {
                <div class="font-bold text-xl mb-2">Riepilogo ordine</div>
                <ul>
-                  @for (item of (cartItems$ | async) ?? []; track item.pizza.id) {
+                  @for (item of (cartItems$ | async) ?? []; track item.cartItemId) {
                      <li class="mb-4 pb-4 border-b border-gray-200">
                         <div class="flex justify-between items-center gap-2">
                            <div class="flex-1">
-                              <p class="text-gray-700 text-base">
-                                 {{ item.pizza.name }} x{{ item.quantity }} - {{ (item.pizza.price * item.quantity) |
+                              <p class="text-gray-700 text-base font-semibold">
+                                 {{ item.pizza.name }} x{{ item.quantity }} — {{ (item.pizza.price * item.quantity) |
                                  currency:'EUR':'symbol':'1.2-2' }}
                               </p>
+                              @if (item.addedIngredients.length > 0) {
+                                 <p class="text-xs text-green-700 mt-0.5">aggiunte: {{ item.addedIngredients.join(', ') }}</p>
+                              }
+                              @if (isCustomized(item) && (item.removedIngredients.length > 0 || item.note)) {
+                                 <p class="text-xs text-gray-500 mt-0.5 italic">note: {{ getNoteText(item) }}</p>
+                              }
                            </div>
                            <div class="flex gap-2">
                               <button class="bg-primary hover:bg-red-600 text-white font-bold py-1 px-2 rounded w-7"
-                                 (click)="decrementQuantity(item.pizza.id)">-</button>
+                                 (click)="decrementQuantity(item.cartItemId)">-</button>
                               <button class="bg-primary hover:bg-red-600 text-white font-bold py-1 px-2 rounded w-7"
-                                 (click)="incrementQuantity(item.pizza.id)">+</button>
+                                 (click)="incrementQuantity(item.cartItemId)">+</button>
                               <button class="bg-primary hover:bg-red-600 text-white font-bold py-1 px-2 rounded w-7"
-                                 (click)="removeItem(item.pizza.id)">✕</button>
+                                 (click)="removeItem(item.cartItemId)">✕</button>
                            </div>
                         </div>
                      </li>

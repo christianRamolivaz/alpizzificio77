@@ -8,7 +8,14 @@
   <!-- Menu desktop -->
   <ul class="navbar-menu">
     <li><a routerLink="">Home</a></li>
-    <li><a routerLink="/menu">Menu</a></li>
+    <li class="navbar-menu-item--has-dropdown">
+      <a routerLink="/menu">Menu</a>
+      <ul class="navbar-dropdown">
+        @for (cat of categories(); track cat) {
+          <li><a (click)="goToCategory(cat)">{{ cat }}</a></li>
+        }
+      </ul>
+    </li>
     <li><a routerLink="/chi-siamo">Chi Siamo</a></li>
     <li><a routerLink="/riepilogo">Riepilogo</a></li>
   </ul>
@@ -27,9 +34,25 @@
 <!-- Sidebar mobile -->
 <aside class="mobile-sidebar" [class.open]="menuOpen">
   <button class="close-btn" (click)="toggleMenu()">&times;</button>
+  <div class="mobile-sidebar__header">
+    <img src="/logo.png" alt="Logo" class="mobile-sidebar__logo" />
+    <span class="mobile-sidebar__title">AlPizzificio 77</span>
+  </div>
   <ul>
     <li><a routerLink="" (click)="toggleMenu()">Home</a></li>
-    <li><a routerLink="/menu" (click)="toggleMenu()">Menu</a></li>
+    <li class="mobile-menu-item--has-sub">
+      <div class="mobile-menu-item__header" (click)="mobileMenuExpanded = !mobileMenuExpanded">
+        <a routerLink="/menu" (click)="toggleMenu()">Menu</a>
+        <span class="mobile-menu-chevron" [class.mobile-menu-chevron--open]="mobileMenuExpanded">&#8250;</span>
+      </div>
+      @if (mobileMenuExpanded) {
+        <ul class="mobile-submenu">
+          @for (cat of categories(); track cat) {
+            <li><a (click)="goToCategory(cat)">{{ cat }}</a></li>
+          }
+        </ul>
+      }
+    </li>
     <li><a routerLink="/chi-siamo" (click)="toggleMenu()">Chi Siamo</a></li>
     <li><a routerLink="/riepilogo" (click)="toggleMenu()">Riepilogo</a></li>
   </ul>

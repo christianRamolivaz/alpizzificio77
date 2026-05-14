@@ -4,9 +4,20 @@ import { Observable } from 'rxjs';
 
 export interface Pizza {
   id: number;
+  category: string;
   name: string;
   description: string;
+  baseIngredients: string[];
   price: number;
+}
+
+export type MenuItem = Pizza;
+
+export interface Ingredient {
+  id: number;
+  nome: string;
+  categoria: string;
+  prezzo: number;
 }
 
 @Injectable({
@@ -14,9 +25,14 @@ export interface Pizza {
 })
 export class Product {
   private http = inject(HttpClient);
-  private menuUrl = 'menu.json'; // Path relativo alla cartella public/assets (Angular serve i file statici da public)
+  private menuUrl = 'menu.json';
+  private ingredientiUrl = 'ingredienti.json';
 
   getPizzas(): Observable<Pizza[]> {
     return this.http.get<Pizza[]>(this.menuUrl);
+  }
+
+  getIngredients(): Observable<Ingredient[]> {
+    return this.http.get<Ingredient[]>(this.ingredientiUrl);
   }
 }

@@ -1,31 +1,138 @@
-<section class="cpage pt-8 md:pt-0" >
-   <h1 class=" text-center text-4xl">Il Nostro Menu</h1>
-   <div class="flex justify-center px-4 md:px-0">
-      <div class="max-w-lg w-full rounded overflow-hidden shadow-lg bg-white">
-         <div class="px-6 py-4">
-            @if (pizzas$ | async; as pizzas) {
-               @for (pizza of pizzas; track pizza.id) {
-                  <ul class="pizza-list">
-                     <li class="pizza-item">
-                        <div style="display: flex; align-items: center; justify-content: space-between; gap: 1rem;">
-                        <span>
-                           <h3 style="display: inline; margin-right: 1rem;" class="font-bold">{{ pizza.name }} - {{ pizza.price | currency:'EUR':'symbol':'1.2-2' }}</h3>
-                        </span>
-                        <button class="bg-primary hover:bg-hPrimary text-white font-bold py-2 px-4 rounded-full" (click)="addToCart(pizza)">+</button>
-                        </div>
-                        <p>{{ pizza.description }}</p>
-                     </li>
-                  </ul>
-               } @empty {
-                  <ul><li>Nessuna pizza disponibile.</li></ul>
-               }
-            } @else {
-               <p>Caricamento menu...</p>
+<section class="cpage pt-6 md:pt-0">
+  <h1 class="menu-title">Il Nostro Menu</h1>
+  <div class="menu-wrapper">
+    <div class="menu-card">
+
+      <!-- FILTRO CATEGORIE -->
+      @if (allCategories().length > 0) {
+        <div class="category-filter">
+          <p class="category-filter__label">Filtra per categoria</p>
+          <div class="category-filter__chips">
+            @for (group of allCategories(); track group.category) {
+              <label class="category-chip" [class.category-chip--active]="isCategorySelected(group.category)">
+                <input type="checkbox"
+                  class="sr-only"
+                  [checked]="isCategorySelected(group.category)"
+                  (change)="toggleCategoryFilter(group.category)" />
+                {{ group.category }}
+              </label>
             }
-            <div class="mt-4 text-center">
-               <button class="bg-primary hover:bg-hPrimary text-white font-bold py-2 px-4 rounded-full" routerLink="/riepilogo" >Ordina ora</button>
-            </div>
-         </div>
+          </div>
+          @if (selectedCategories().size > 0) {
+            <button (click)="clearCategoryFilter()" class="category-filter__reset">
+              Mostra tutto
+            </button>
+          }
+        </div>
+      }
+
+      <!-- CATEGORIE -->
+      @for (group of filteredCategories(); track group.category) {
+        <div class="menu-section">
+
+          <!-- INTESTAZIONE CATEGORIA -->
+          <button
+            (click)="toggleCategoryCollapse(group.category)"
+            class="menu-section__header">
+            <span class="menu-section__title">{{ group.category }}</span>
+            <span class="menu-section__chevron" [class.menu-section__chevron--open]="!isCategoryCollapsed(group.category)"></span>
+          </button>
+
+          @if (!isCategoryCollapsed(group.category)) {
+            <ul class="menu-list">
+              @for (item of group.items; track item.id) {
+                <li class="menu-item">
+                  <div class="menu-item__row">
+                    <div class="menu-item__info">
+                      <span class="menu-item__name">{{ item.name }}</span>
+                      <span class="menu-item__price">{{ item.price | currency:'EUR':'symbol':'1.2-2' }}</span>
+                    </div>
+                    <div class="menu-item__actions">
+                      <button class="btn-action btn-action--add" (click)="quickAddToCart(item)">+</button>
+                      @if (canCustomize(group.category)) {
+                        <button class="btn-action btn-action--edit" (click)="openCustomization(item)">Modifica</button>
+                      }
+                    </div>
+                  </div>
+                  <p class="menu-item__desc">{{ item.description }}</p>
+
+                  @if (activeCustomization !== null && activeCustomization.pizza.id === item.id) {
+                    <div class="customize-panel">
+
+                      @if (item.baseIngredients.length > 0) {
+                        <div class="customize-panel__section">
+                          <p class="customize-panel__label">Ingredienti base — deseleziona per rimuovere</p>
+                          <div class="customize-panel__chips">
+                            @for (ing of item.baseIngredients; track ing) {
+                              <label class="ingredient-chip" [class.ingredient-chip--removed]="!isIngredientIncluded(ing)">
+                                <input type="checkbox"
+                                  class="sr-only"
+                                  [checked]="isIngredientIncluded(ing)"
+                                  (change)="toggleIngredient(ing)" />
+                                {{ ing }}
+                              </label>
+                            }
+                          </div>
+                        </div>
+                      }
+
+                      <div class="customize-panel__section">
+                        <p class="customize-panel__label">Aggiunte</p>
+                        <div class="customize-panel__add-row">
+                          <select
+                            [(ngModel)]="activeCustomization!.newIngredient"
+                            class="customize-panel__select">
+                            <option value="">— Seleziona ingrediente —</option>
+                            @for (ing of getAvailableIngredients(); track ing.id) {
+                              <option [value]="ing.nome">{{ ing.nome }} ({{ ing.categoria }})</option>
+                            }
+                          </select>
+                          <button (click)="addIngredient()" class="btn-action btn-action--add">+</button>
+                        </div>
+                        @if (activeCustomization!.addedIngredients.length > 0) {
+                          <div class="customize-panel__chips mt-2">
+                            @for (ing of activeCustomization!.addedIngredients; track ing) {
+                              <span class="ingredient-chip ingredient-chip--added">
+                                {{ ing }}
+                                <button (click)="removeAddedIngredient(ing)" class="ingredient-chip__remove">✕</button>
+                              </span>
+                            }
+                          </div>
+                        }
+                      </div>
+
+                      <div class="customize-panel__section">
+                        <p class="customize-panel__label">Nota per questa voce</p>
+                        <textarea
+                          [(ngModel)]="activeCustomization!.note"
+                          rows="2"
+                          placeholder="Allergie, preferenze specifiche..."
+                          class="customize-panel__textarea">
+                        </textarea>
+                      </div>
+
+                      <div class="customize-panel__footer">
+                        <button (click)="cancelCustomization()" class="btn-action btn-action--ghost">Annulla</button>
+                        <button (click)="confirmAddToCart()" class="btn-action btn-action--confirm">Aggiungi al carrello</button>
+                      </div>
+                    </div>
+                  }
+                </li>
+              }
+            </ul>
+          }
+        </div>
+      }
+
+      @if (filteredCategories().length === 0 && allCategories().length === 0) {
+        <p class="text-center text-gray-400 py-12 text-sm">Caricamento menu...</p>
+      }
+
+      <div class="menu-order-btn">
+        <button class="bg-primary hover:bg-hPrimary text-white font-bold py-2 px-6 rounded-full" routerLink="/riepilogo">
+          Ordina ora
+        </button>
       </div>
-   </div>
+    </div>
+  </div>
 </section>

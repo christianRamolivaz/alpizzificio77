@@ -10,5 +10,5 @@ import { CartComponent } from './components/cart/cart';
   styleUrl: './app.css'
 })
 export class App {
-  protected readonly title = signal('alpizzificio');
+  protected readonly title = signal('alpizzificio77');
 }

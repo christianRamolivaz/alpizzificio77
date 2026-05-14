@@ -1,6 +1,6 @@
 import { CommonModule, CurrencyPipe } from '@angular/common';
 import { Component, inject } from '@angular/core';
-import { CartService, CartItem } from '../../services/cart-service';
+import { CartService, CartItem, isCustomized, buildNoteText } from '../../services/cart-service';
 import { map } from 'rxjs/operators';
 import { RouterLink } from "@angular/router";
 
@@ -35,17 +35,20 @@ export class CartComponent {
     }, 1200);
   }
 
-  incrementQuantity(pizzaId: number) {
-    this.cartService.addToCart(pizzaId);
+  incrementQuantity(cartItemId: string) {
+    this.cartService.incrementQuantity(cartItemId);
   }
 
-  decrementItem(pizzaId: number) {
-    this.cartService.decrementQuantity(pizzaId);
+  decrementItem(cartItemId: string) {
+    this.cartService.decrementQuantity(cartItemId);
     this.showFeedback('Quantità aggiornata');
   }
 
-  removeItem(pizzaId: number) {
-    this.cartService.removeFromCart(pizzaId);
+  removeItem(cartItemId: string) {
+    this.cartService.removeFromCart(cartItemId);
     this.showFeedback('Riga rimossa');
   }
+
+  isCustomized(item: CartItem): boolean { return isCustomized(item); }
+  getNoteText(item: CartItem): string { return buildNoteText(item); }
 }

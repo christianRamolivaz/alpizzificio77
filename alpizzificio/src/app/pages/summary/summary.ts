@@ -2,8 +2,7 @@ import { AsyncPipe, CommonModule, CurrencyPipe } from '@angular/common';
 import { Component, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { map, take } from 'rxjs';
-import { CartItem, CartService } from '../../services/cart-service';
-import { Pizza } from '../../services/product';
+import { CartItem, CartService, isCustomized, buildNoteText } from '../../services/cart-service';
 
 @Component({
   selector: 'app-summary',
@@ -53,38 +52,35 @@ export class Summary {
     this.notesExpanded.update(val => !val);
   }
 
-  incrementQuantity(pizzaId: number) {
-    this.cartService.addToCart(this.getCartItemPizza(pizzaId)!);
+  incrementQuantity(cartItemId: string) {
+    this.cartService.incrementQuantity(cartItemId);
   }
 
-  decrementQuantity(pizzaId: number) {
-    this.cartService.decrementQuantity(pizzaId);
+  decrementQuantity(cartItemId: string) {
+    this.cartService.decrementQuantity(cartItemId);
   }
 
-  removeItem(pizzaId: number) {
-    this.cartService.removeFromCart(pizzaId);
+  removeItem(cartItemId: string) {
+    this.cartService.removeFromCart(cartItemId);
   }
 
-  private getCartItemPizza(pizzaId: number): Pizza | undefined {
-    let pizza: Pizza | undefined;
-    this.cartItems$.pipe(take(1)).subscribe(items => {
-      const item = items.find(i => i.pizza.id === pizzaId);
-      if (item) {
-        pizza = item.pizza;
-      }
-    });
-    return pizza;
-  }
+  isCustomized(item: CartItem): boolean { return isCustomized(item); }
+  getNoteText(item: CartItem): string { return buildNoteText(item); }
 
   static formatOrderMessage(items: CartItem[], fasciaOraria: string, indirizzo: string, note: string): string {
-    const righe = items.map(item => ` - ${item.quantity} ${item.pizza.name}`);
+    const righe = items.map(item => {
+      let riga = ` - ${item.quantity}x ${item.pizza.name}`;
+      if (item.addedIngredients.length > 0) riga += `\n   aggiunte: ${item.addedIngredients.join(', ')}`;
+      const noteLine = buildNoteText(item);
+      if (noteLine) riga += `\n   note: ${noteLine}`;
+      return riga;
+    });
     return [
       `Ciao! vorrei effettuare il seguente ordine:`,
       ...righe,
       `Orario indicato: ${fasciaOraria}`,
       `Presso: ${indirizzo}`,
-      note.length > 0 ? (`Note: `+note)
-      : ``
+      note.length > 0 ? (`Note: `+note) : ``
     ].join('\n');
   }
 
