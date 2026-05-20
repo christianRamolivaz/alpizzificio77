@@ -61,32 +61,8 @@
     "importoBaby": null,
     "isBaby": false
   },
-  {
+   {
     "id": 8,
-    "category": "Antipasti e Fritti",
-    "name": "Spianata piccante Fritta (1 pz)",
-    "description": "Spianata piccante fritta",
-    "baseIngredients": [
-      "spianata piccante"
-    ],
-    "price": 6.0,
-    "importoBaby": null,
-    "isBaby": false
-  },
-  {
-    "id": 9,
-    "category": "Antipasti e Fritti",
-    "name": "Spianata piccante Fritta (2 pz)",
-    "description": "Spianata piccante fritta – 2 pezzi",
-    "baseIngredients": [
-      "spianata piccante"
-    ],
-    "price": 11.0,
-    "importoBaby": null,
-    "isBaby": false
-  },
-  {
-    "id": 10,
     "category": "Calzoncini Fritti Ripieni",
     "name": "Margherita Fritta (1 pz)",
     "description": "Calzoncino fritto con pomodoro, mozzarella, basilico",
@@ -100,7 +76,7 @@
     "isBaby": false
   },
   {
-    "id": 11,
+    "id": 9,
     "category": "Calzoncini Fritti Ripieni",
     "name": "Margherita Fritta (2 pz)",
     "description": "Calzoncini fritti con pomodoro, mozzarella, basilico",
@@ -110,6 +86,30 @@
       "basilico"
     ],
     "price": 9.0,
+    "importoBaby": null,
+    "isBaby": false
+  },
+  {
+    "id": 10,
+    "category": "Calzoncini Fritti Ripieni",
+    "name": "Spianata piccante Fritta (1 pz)",
+    "description": "Spianata piccante fritta",
+    "baseIngredients": [
+      "spianata piccante"
+    ],
+    "price": 6.0,
+    "importoBaby": null,
+    "isBaby": false
+  },
+  {
+    "id": 11,
+    "category": "Calzoncini Fritti Ripieni",
+    "name": "Spianata piccante Fritta (2 pz)",
+    "description": "Spianata piccante fritta – 2 pezzi",
+    "baseIngredients": [
+      "spianata piccante"
+    ],
+    "price": 11.0,
     "importoBaby": null,
     "isBaby": false
   },

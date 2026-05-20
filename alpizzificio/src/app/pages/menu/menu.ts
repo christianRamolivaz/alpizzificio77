@@ -178,8 +178,8 @@ export class Menu {
     if (!this.activeCustomization) return;
     if (ingredientName && !this.activeCustomization.addedIngredients.includes(ingredientName)) {
       this.activeCustomization.addedIngredients.push(ingredientName);
-      this.activeCustomization.newIngredient = '';
     }
+    this.activeCustomization.newIngredient = '';
   }
 
   removeAddedIngredient(ingredient: string) {
@@ -210,6 +210,10 @@ export class Menu {
 
   quickAddToCart(pizza: Pizza) {
     this.cartService.addOrIncrementPlain(pizza);
+  }
+
+  quickAddBabyToCart(pizza: Pizza) {
+    this.cartService.addOrIncrementBaby(pizza);
   }
 
   confirmAddToCart() {

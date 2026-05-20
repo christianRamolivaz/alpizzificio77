@@ -87,7 +87,10 @@ export class CartService {
   }
 
   getTotal(): number {
-    return this.items.reduce((sum, item) => sum + (item.pizza.price + item.extraPrice) * item.quantity, 0);
+    return this.items.reduce((sum, item) => {
+      const basePrice = item.isBaby && item.pizza.importoBaby ? item.pizza.importoBaby : item.pizza.price;
+      return sum + (basePrice + item.extraPrice) * item.quantity;
+    }, 0);
   }
 
   clearCart() {
@@ -109,6 +112,18 @@ export class CartService {
       this.items$.next([...this.items]);
     } else {
       this.addToCart(pizza);
+    }
+  }
+
+  addOrIncrementBaby(pizza: Pizza): void {
+    const existing = this.items.find(
+      item => item.pizza.id === pizza.id && !isCustomized(item) && item.isBaby
+    );
+    if (existing) {
+      existing.quantity++;
+      this.items$.next([...this.items]);
+    } else {
+      this.addToCart(pizza, { isBaby: true });
     }
   }
 }
