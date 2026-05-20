@@ -41,3 +41,116 @@
   margin-top: 10px;
 }
 
+.menu-title {
+  text-align: center;
+  font-size: 2rem;
+  font-weight: 800;
+  margin-bottom: 2rem;
+  letter-spacing: -0.03em;
+  color: #111827;
+  position: relative;
+  display: inline-block;
+  width: 100%;
+  padding-bottom: 16px;
+}
+
+.menu-title::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 80px;
+  height: 5px;
+  background: linear-gradient(90deg, transparent 0%, #d1121d 20%, #f97316 50%, #d1121d 80%, transparent 100%);
+  border-radius: 3px;
+  box-shadow: 0 3px 12px rgba(209, 18, 29, 0.25);
+}
+
+.menu-item {
+  padding: 0.875rem 0;
+  border-bottom: 1px solid #f3f4f6;
+  min-width: 0;
+  box-sizing: border-box;
+}
+
+.menu-wrapper {
+  display: flex;
+  justify-content: center;
+  padding: 0 0.75rem;
+}
+
+.menu-card {
+  width: 100%;
+  max-width: 1050px;
+  background: linear-gradient(90deg, #ffffecea 20%, #e0c31b9a 100%);
+  border-radius: 1.25rem;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.09);
+  padding: 1.25rem 1rem 1.75rem;
+  overflow-x: hidden;
+}
+
+
+
+.menu-item__header {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.menu-item__row--main {
+  display: grid;
+  grid-template-columns: 1fr auto auto auto;
+  align-items: center;
+  width: 100%;
+  gap: 0.5rem;
+}
+
+.menu-item__baby-row {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  justify-content: flex-end;
+  background: rgba(245, 158, 11, 0.12);
+  border: 1px solid rgba(245, 158, 11, 0.35);
+  border-radius: 999px;
+  padding: 0.25rem 0.75rem;
+  width: 100%;
+}
+
+
+.menu-item__info {
+  flex: 1;
+  min-width: 0;
+}
+
+.menu-item__name {
+  font-size: clamp(0.75rem, 2vw, 0.97rem);
+  font-weight: 700;
+  color: #111827;
+  line-height: 1.3;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.menu-item__price {
+  display: inline-block;
+  font-size: 0.85rem;
+  color: #fff;
+  font-weight: 700;
+  background: #d1121d;
+  border-radius: 999px;
+  padding: 0.1rem 0.6rem;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.menu-item__price--baby {
+  background: #f59e0b;
+  color: #111827;
+  font-size: 0.8rem;
+  padding: 0.2rem 0.55rem;
+}
