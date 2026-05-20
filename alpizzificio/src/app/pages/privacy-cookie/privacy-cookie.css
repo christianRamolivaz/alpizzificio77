@@ -1,0 +1,128 @@
+.privacy-page {
+  min-height: 100vh;
+  background: #fff;
+  padding: 2rem 1rem 4rem;
+}
+
+.privacy-container {
+  max-width: 760px;
+  margin: 0 auto;
+}
+
+.privacy-page__title {
+  font-size: 2rem;
+  font-weight: 800;
+  color: #1c1917;
+  margin-bottom: 0.25rem;
+}
+
+.privacy-page__updated {
+  font-size: 0.8rem;
+  color: #a8a29e;
+  margin-bottom: 2rem;
+}
+
+/* Status box */
+.consent-status-box {
+  background: #fef9ec;
+  border: 1.5px solid #fcd34d;
+  border-radius: 0.75rem;
+  padding: 1rem 1.25rem;
+  margin-bottom: 2rem;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.consent-status-box__label {
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #92400e;
+  flex-basis: 100%;
+}
+
+.consent-status-box__value {
+  font-size: 0.9rem;
+  color: #44403c;
+  font-weight: 600;
+  flex: 1;
+}
+
+.consent-reset-btn {
+  background: #b42320;
+  color: #fff;
+  font-size: 0.8rem;
+  font-weight: 700;
+  padding: 0.4rem 1rem;
+  border: none;
+  border-radius: 999px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.2s;
+}
+.consent-reset-btn:hover { background: #8b1a18; }
+
+/* Sezioni */
+section {
+  margin-bottom: 2rem;
+}
+
+section h2 {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #b42320;
+  margin-bottom: 0.6rem;
+  border-left: 3px solid #b42320;
+  padding-left: 0.6rem;
+}
+
+section p {
+  font-size: 0.9rem;
+  color: #44403c;
+  line-height: 1.7;
+  margin-bottom: 0.5rem;
+}
+
+section a {
+  color: #b42320;
+  text-decoration: underline;
+}
+section a:hover { color: #8b1a18; }
+
+/* Tabella */
+.cookie-table-wrapper {
+  overflow-x: auto;
+  margin-top: 0.75rem;
+}
+
+.cookie-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.82rem;
+}
+
+.cookie-table th,
+.cookie-table td {
+  padding: 0.6rem 0.75rem;
+  text-align: left;
+  border-bottom: 1px solid #e7e5e4;
+}
+
+.cookie-table th {
+  background: #fafaf9;
+  font-weight: 700;
+  color: #44403c;
+  white-space: nowrap;
+}
+
+.cookie-table td { color: #57534e; }
+
+.cookie-table code {
+  font-size: 0.78rem;
+  background: #f3f4f6;
+  padding: 0.1rem 0.35rem;
+  border-radius: 4px;
+}

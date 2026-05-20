@@ -14,6 +14,8 @@ export interface CartItem {
   addedIngredients: string[];
   /** Nota libera per questa specifica riga. */
   note: string;
+  /** Costo aggiuntivo degli ingredienti extra (somma dei prezzi degli ingredienti aggiunti). */
+  extraPrice: number;
 }
 
 export interface CartOrder {
@@ -36,7 +38,7 @@ export class CartService {
    */
   addToCart(
     pizza: Pizza,
-    customization?: { addedIngredients?: string[]; removedIngredients?: string[]; note?: string }
+    customization?: { addedIngredients?: string[]; removedIngredients?: string[]; note?: string; extraPrice?: number }
   ): string {
     const cartItemId = crypto.randomUUID();
     this.items.push({
@@ -46,6 +48,7 @@ export class CartService {
       addedIngredients: customization?.addedIngredients ?? [],
       removedIngredients: customization?.removedIngredients ?? [],
       note: customization?.note ?? '',
+      extraPrice: customization?.extraPrice ?? 0,
     });
     this.items$.next([...this.items]);
     return cartItemId;
@@ -81,7 +84,7 @@ export class CartService {
   }
 
   getTotal(): number {
-    return this.items.reduce((sum, item) => sum + item.pizza.price * item.quantity, 0);
+    return this.items.reduce((sum, item) => sum + (item.pizza.price + item.extraPrice) * item.quantity, 0);
   }
 
   clearCart() {

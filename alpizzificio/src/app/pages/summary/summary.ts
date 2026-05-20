@@ -1,6 +1,7 @@
 import { AsyncPipe, CommonModule, CurrencyPipe } from '@angular/common';
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, OnInit, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { Meta, Title } from '@angular/platform-browser';
 import { map, take } from 'rxjs';
 import { CartItem, CartService, isCustomized, buildNoteText } from '../../services/cart-service';
 
@@ -10,13 +11,22 @@ import { CartItem, CartService, isCustomized, buildNoteText } from '../../servic
   templateUrl: './summary.html',
   styleUrl: './summary.css',
 })
-export class Summary {
+export class Summary implements OnInit {
   private cartService = inject(CartService);
+  private titleService = inject(Title);
+  private meta = inject(Meta);
+
+  ngOnInit(): void {
+    this.titleService.setTitle('Riepilogo Ordine \u2013 Al Pizzificio 77');
+    this.meta.updateTag({ name: 'description', content: 'Controlla il tuo ordine e completa l\'acquisto su Al Pizzificio 77. Pizza artigianale con consegna calda a domicilio.' });
+    this.meta.updateTag({ name: 'robots', content: 'noindex, nofollow' });
+  }
 
   indirizzo = signal("");
   fasciaOraria = signal("");
   notesExpanded = signal(false);
   note = signal("");
+  nominativo = signal("");
   dataConsegna = signal(new Date());
 
   private readonly ORARI_BASE = [
@@ -25,7 +35,7 @@ export class Summary {
 
   cartItems$ = this.cartService.getItems();
   totale$ = this.cartItems$.pipe(
-    map((items: CartItem[]) => items.reduce((sum: number, item: CartItem) => sum + (item.pizza.price * item.quantity), 0))
+    map((items: CartItem[]) => items.reduce((sum: number, item: CartItem) => sum + ((item.pizza.price + item.extraPrice) * item.quantity), 0))
   );
 
   
@@ -67,7 +77,7 @@ export class Summary {
   isCustomized(item: CartItem): boolean { return isCustomized(item); }
   getNoteText(item: CartItem): string { return buildNoteText(item); }
 
-  static formatOrderMessage(items: CartItem[], fasciaOraria: string, indirizzo: string, note: string): string {
+  static formatOrderMessage(items: CartItem[], fasciaOraria: string, indirizzo: string, note: string, nominativo: string = ""): string {
     const righe = items.map(item => {
       let riga = ` - ${item.quantity}x ${item.pizza.name}`;
       if (item.addedIngredients.length > 0) riga += `\n   aggiunte: ${item.addedIngredients.join(', ')}`;
@@ -75,20 +85,23 @@ export class Summary {
       if (noteLine) riga += `\n   note: ${noteLine}`;
       return riga;
     });
-    return [
-      `Ciao! vorrei effettuare il seguente ordine:`,
-      ...righe,
-      `Orario indicato: ${fasciaOraria}`,
-      `Presso: ${indirizzo}`,
-      note.length > 0 ? (`Note: `+note) : ``
-    ].join('\n');
+    const messageParts = [];
+    if (nominativo.trim().length > 0) {
+      messageParts.push(`Nominativo: ${nominativo}`);
+    }
+    messageParts.push(`Ciao! vorrei effettuare il seguente ordine:`);
+    messageParts.push(...righe);
+    messageParts.push(`Orario indicato: ${fasciaOraria}`);
+    messageParts.push(`Presso: ${indirizzo}`);
+    if (note.length > 0) messageParts.push(`Note: ${note}`);
+    return messageParts.join('\n');
   }
 
   async sendViaWhatsApp() {
     if (!(await this.validateCart())) return;
 
     const items = await this.getCartItems();
-    const msg = Summary.formatOrderMessage(items, this.fasciaOraria(), this.indirizzo(), this.note());
+    const msg = Summary.formatOrderMessage(items, this.fasciaOraria(), this.indirizzo(), this.note(), this.nominativo());
     
     const conferma = window.confirm('Inviare l\'ordine via WhatsApp?');
     if (conferma) {

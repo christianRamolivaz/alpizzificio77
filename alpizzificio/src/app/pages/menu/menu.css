@@ -15,7 +15,7 @@
 
 .menu-card {
   width: 100%;
-  max-width: 560px;
+  max-width: 900px;
   background: #fff;
   border-radius: 1rem;
   box-shadow: 0 2px 16px rgba(0,0,0,0.08);
@@ -57,6 +57,7 @@
   display: flex;
   flex-wrap: wrap;
   gap: 0.35rem;
+  min-height: 1.8rem;
 }
 
 @media (min-width: 768px) {
@@ -94,6 +95,10 @@
   background: #d1121d;
   border-color: #d1121d;
   color: #fff;
+}
+.category-chip--active:hover {
+  border-color: #d1121d;
+  color: white;
 }
 
 .category-filter__reset {
@@ -277,7 +282,24 @@
   display: flex;
   flex-direction: column;
   gap: 0.875rem;
+  width: 100%;
 }
+
+/* Preview prezzo nel pannello personalizzazione */
+.customize-panel__price-preview {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  background: #fff;
+  border: 1px solid #fcd34d;
+  border-radius: 0.5rem;
+  font-size: 0.85rem;
+}
+.customize-panel__price-base { color: #78716c; }
+.customize-panel__price-extra { color: #16a34a; font-weight: 600; }
+.customize-panel__price-total { color: #92400e; font-weight: 700; margin-left: auto; font-size: 0.95rem; }
 
 .customize-panel__section { display: block; }
 

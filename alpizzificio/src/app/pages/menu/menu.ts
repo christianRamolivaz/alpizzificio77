@@ -3,6 +3,7 @@ import { CurrencyPipe, CommonModule } from '@angular/common';
 import { Component, computed, inject, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
+import { Meta, Title } from '@angular/platform-browser';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { map } from 'rxjs/operators';
 import { CartService } from '../../services/cart-service';
@@ -34,7 +35,13 @@ export class Menu {
   private productService = inject(Product);
   private cartService = inject(CartService);
 
-  constructor() {
+  constructor(private titleService: Title, private meta: Meta) {
+    this.titleService.setTitle('Menu Pizze – Al Pizzificio 77 | Aymavilles');
+    this.meta.updateTag({ name: 'description', content: 'Scopri il menu di Al Pizzificio 77: pizze artigianali, antipasti, dolci e bevande. Ordina online con consegna calda a domicilio ad Aymavilles e dintorni.' });
+    this.meta.updateTag({ property: 'og:title', content: 'Menu – Al Pizzificio 77' });
+    this.meta.updateTag({ property: 'og:description', content: 'Sfoglia le nostre pizze artigianali e ordina online. Consegna calda a domicilio con la Red Box.' });
+    this.meta.updateTag({ property: 'og:url', content: 'https://www.alpizzificio77.it/menu' });
+    this.meta.updateTag({ name: 'robots', content: 'index, follow' });
     inject(ActivatedRoute).queryParamMap.subscribe(params => {
       const cat = params.get('categoria');
       this.selectedCategories.set(cat ? new Set([cat]) : new Set());
@@ -119,6 +126,22 @@ export class Menu {
     return !NO_CUSTOMIZE_CATEGORIES.has(category);
   }
 
+  /** Calcola il costo extra degli ingredienti aggiunti nella personalizzazione attiva */
+  get currentExtraPrice(): number {
+    if (!this.activeCustomization) return 0;
+    const ingredients = this.allIngredients();
+    return this.activeCustomization.addedIngredients.reduce((sum, name) => {
+      const found = ingredients.find(i => i.nome === name);
+      return sum + (found?.prezzo ?? 0);
+    }, 0);
+  }
+
+  /** Prezzo totale (base + extra) mostrato nel pannello di personalizzazione */
+  get currentTotalPrice(): number {
+    if (!this.activeCustomization) return 0;
+    return this.activeCustomization.pizza.price + this.currentExtraPrice;
+  }
+
   activeCustomization: CustomizationState | null = null;
 
   quickAddToCart(pizza: Pizza) {
@@ -161,6 +184,14 @@ export class Menu {
     this.activeCustomization.newIngredient = '';
   }
 
+  onIngredientSelected(ingredientName: string) {
+    if (!this.activeCustomization) return;
+    if (ingredientName && !this.activeCustomization.addedIngredients.includes(ingredientName)) {
+      this.activeCustomization.addedIngredients.push(ingredientName);
+      this.activeCustomization.newIngredient = '';
+    }
+  }
+
   removeAddedIngredient(ingredient: string) {
     if (!this.activeCustomization) return;
     this.activeCustomization.addedIngredients =
@@ -170,10 +201,12 @@ export class Menu {
   confirmAddToCart() {
     if (!this.activeCustomization) return;
     const { pizza, removedIngredients, addedIngredients, note } = this.activeCustomization;
+    const extraPrice = this.currentExtraPrice;
     this.cartService.addToCart(pizza, {
       removedIngredients: [...removedIngredients],
       addedIngredients: [...addedIngredients],
       note,
+      extraPrice,
     });
     this.activeCustomization = null;
   }

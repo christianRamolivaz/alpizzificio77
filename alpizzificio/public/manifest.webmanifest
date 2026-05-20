@@ -1,9 +1,13 @@
 {
-  "name": "alpizzificio",
-  "short_name": "alpizzificio",
+  "name": "Al Pizzificio 77",
+  "short_name": "Al Pizzificio 77",
+  "description": "Pizza artigianale con consegna calda a domicilio ad Aymavilles, Valle d'Aosta.",
   "display": "standalone",
   "scope": "./",
   "start_url": "./",
+  "background_color": "#e2e7c3",
+  "theme_color": "#b42320",
+  "lang": "it",
   "icons": [
     {
       "src": "icons/icon-72x72.png",

@@ -11,7 +11,7 @@
                         <div class="flex justify-between items-center gap-2">
                            <div class="flex-1">
                               <p class="text-gray-700 text-base font-semibold">
-                                 {{ item.pizza.name }} x{{ item.quantity }} — {{ (item.pizza.price * item.quantity) |
+                                 {{ item.pizza.name }} x{{ item.quantity }} — {{ ((item.pizza.price + item.extraPrice) * item.quantity) |
                                  currency:'EUR':'symbol':'1.2-2' }}
                               </p>
                               @if (item.addedIngredients.length > 0) {
@@ -53,6 +53,17 @@
                         </textarea>
                      </div>
                   }
+               </div>
+               <!-- NOMINATIVO FIELD -->
+               <div class="mb-6">
+                  <label for="nominativo" class="block mb-2 text-sm font-bold text-gray-800">👤 Nominativo</label>
+                  <input 
+                     id="nominativo"
+                     type="text"
+                     [ngModel]="nominativo()"
+                     (ngModelChange)="nominativo.set($event)"
+                     class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-amber-500 focus:ring-2 focus:ring-amber-200 focus:outline-none transition-all text-gray-700 placeholder-gray-400"
+                     placeholder="Es. Mario Rossi">
                </div>
                <!-- INDIRIZZO FIELD -->
                <div class="mb-6">

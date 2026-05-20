@@ -1,0 +1,72 @@
+@if (consent.showBanner()) {
+  <div class="cookie-overlay" role="dialog" aria-modal="true" aria-label="Informativa cookie">
+    <div class="cookie-banner">
+
+      @if (!showCustomPanel()) {
+        <!-- Vista principale -->
+        <div class="cookie-banner__header">
+          <span class="cookie-banner__icon">🍪</span>
+          <h2 class="cookie-banner__title">Utilizziamo i cookie</h2>
+        </div>
+        <p class="cookie-banner__text">
+          Usiamo cookie tecnici necessari al funzionamento del sito e, con il tuo consenso,
+          cookie analitici per migliorare l'esperienza. Non utilizziamo cookie di profilazione
+          per la pubblicità. Leggi la nostra
+          <a routerLink="/privacy-cookie" class="cookie-banner__link">Cookie Policy</a>.
+        </p>
+        <div class="cookie-banner__actions">
+          <button class="cookie-btn cookie-btn--ghost" (click)="openCustom()">Personalizza</button>
+          <button class="cookie-btn cookie-btn--outline" (click)="rejectAll()">Rifiuta tutto</button>
+          <button class="cookie-btn cookie-btn--primary" (click)="acceptAll()">Accetta tutto</button>
+        </div>
+
+      } @else {
+        <!-- Vista personalizzazione -->
+        <div class="cookie-banner__header">
+          <h2 class="cookie-banner__title">Personalizza le preferenze</h2>
+        </div>
+
+        <div class="cookie-options">
+          <!-- Necessari: sempre attivi -->
+          <div class="cookie-option">
+            <div class="cookie-option__info">
+              <span class="cookie-option__name">Cookie tecnici necessari</span>
+              <span class="cookie-option__desc">Indispensabili per il funzionamento del sito (carrello, navigazione). Non possono essere disattivati.</span>
+            </div>
+            <div class="cookie-toggle cookie-toggle--always-on">Sempre attivi</div>
+          </div>
+
+          <!-- Analitici -->
+          <div class="cookie-option">
+            <div class="cookie-option__info">
+              <span class="cookie-option__name">Cookie analitici</span>
+              <span class="cookie-option__desc">Ci aiutano a capire come viene usato il sito in forma anonima e aggregata.</span>
+            </div>
+            <label class="cookie-toggle__switch">
+              <input type="checkbox" [checked]="analyticsChoice()" (change)="analyticsChoice.set(!analyticsChoice())" />
+              <span class="cookie-toggle__slider"></span>
+            </label>
+          </div>
+
+          <!-- Marketing -->
+          <div class="cookie-option">
+            <div class="cookie-option__info">
+              <span class="cookie-option__name">Cookie di marketing</span>
+              <span class="cookie-option__desc">Utilizzati per mostrare contenuti personalizzati sui social network.</span>
+            </div>
+            <label class="cookie-toggle__switch">
+              <input type="checkbox" [checked]="marketingChoice()" (change)="marketingChoice.set(!marketingChoice())" />
+              <span class="cookie-toggle__slider"></span>
+            </label>
+          </div>
+        </div>
+
+        <div class="cookie-banner__actions">
+          <button class="cookie-btn cookie-btn--ghost" (click)="cancelCustom()">Indietro</button>
+          <button class="cookie-btn cookie-btn--primary" (click)="saveCustom()">Salva preferenze</button>
+        </div>
+      }
+
+    </div>
+  </div>
+}

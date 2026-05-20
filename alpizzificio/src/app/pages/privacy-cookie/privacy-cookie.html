@@ -1,0 +1,116 @@
+<article class="privacy-page">
+  <div class="privacy-container">
+    <h1 class="privacy-page__title">Cookie Policy</h1>
+    <p class="privacy-page__updated">Aggiornata al 19 maggio 2026</p>
+
+    <!-- Stato attuale consenso -->
+    <div class="consent-status-box">
+      <p class="consent-status-box__label">Il tuo consenso attuale</p>
+      <p class="consent-status-box__value">{{ currentStatus }}</p>
+      <button class="consent-reset-btn" (click)="resetConsent()">
+        Modifica le preferenze
+      </button>
+    </div>
+
+    <section>
+      <h2>Cosa sono i cookie?</h2>
+      <p>
+        I cookie sono piccoli file di testo che i siti web salvano sul tuo dispositivo quando li visiti.
+        Servono a far funzionare il sito correttamente, ricordare le tue preferenze e, con il tuo consenso,
+        raccogliere informazioni statistiche sull'utilizzo.
+      </p>
+    </section>
+
+    <section>
+      <h2>Cookie che utilizziamo</h2>
+
+      <div class="cookie-table-wrapper">
+        <table class="cookie-table">
+          <thead>
+            <tr>
+              <th>Nome</th>
+              <th>Tipo</th>
+              <th>Durata</th>
+              <th>Scopo</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>alpizzificio_cookie_consent</code></td>
+              <td>Tecnico</td>
+              <td>12 mesi</td>
+              <td>Salva le tue preferenze sul consenso ai cookie</td>
+            </tr>
+            <tr>
+              <td>Cookie di sessione</td>
+              <td>Tecnico</td>
+              <td>Sessione</td>
+              <td>Gestione del carrello e navigazione tra le pagine</td>
+            </tr>
+            <tr>
+              <td>Cookie analitici (es. GA4)</td>
+              <td>Analitico</td>
+              <td>Fino a 24 mesi</td>
+              <td>Statistiche anonime sull'utilizzo del sito (solo se acconsentito)</td>
+            </tr>
+            <tr>
+              <td>Cookie social/marketing</td>
+              <td>Marketing</td>
+              <td>Variabile</td>
+              <td>Contenuti personalizzati sui social network (solo se acconsentito)</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section>
+      <h2>Cookie tecnici necessari</h2>
+      <p>
+        Questi cookie sono indispensabili per il funzionamento del sito e non possono essere disattivati.
+        Non raccolgono informazioni personali e non richiedono il tuo consenso.
+      </p>
+    </section>
+
+    <section>
+      <h2>Cookie analitici</h2>
+      <p>
+        Utilizziamo cookie analitici (in forma aggregata e anonima) per capire come i visitatori interagiscono
+        con il sito. Questi cookie vengono attivati solo previo tuo consenso esplicito.
+      </p>
+    </section>
+
+    <section>
+      <h2>Cookie di marketing</h2>
+      <p>
+        I cookie di marketing vengono usati per mostrare contenuti personalizzati attraverso i social network
+        (es. Instagram). Vengono attivati solo previo tuo consenso esplicito.
+      </p>
+    </section>
+
+    <section>
+      <h2>Come gestire i cookie</h2>
+      <p>
+        Puoi modificare le tue preferenze in qualsiasi momento tramite il pulsante
+        <strong>"Modifica le preferenze"</strong> in cima a questa pagina, oppure configurando il tuo
+        browser. Tieni presente che la disattivazione dei cookie tecnici può compromettere il
+        funzionamento del sito.
+      </p>
+      <p>
+        Per maggiori informazioni su come gestire i cookie nel tuo browser, consulta le guide ufficiali:
+        <a href="https://support.google.com/chrome/answer/95647" target="_blank" rel="noopener">Chrome</a>,
+        <a href="https://support.mozilla.org/it/kb/protezione-antitracciamento-avanzata-firefox" target="_blank" rel="noopener">Firefox</a>,
+        <a href="https://support.apple.com/it-it/guide/safari/sfri11471/mac" target="_blank" rel="noopener">Safari</a>.
+      </p>
+    </section>
+
+    <section>
+      <h2>Titolare del trattamento</h2>
+      <p>
+        <strong>Al Pizzificio 77</strong><br />
+        Aymavilles, Valle d'Aosta<br />
+        Per informazioni: <a href="mailto:info&#64;alpizzificio77.it">info&#64;alpizzificio77.it</a>
+      </p>
+    </section>
+  </div>
+</article>

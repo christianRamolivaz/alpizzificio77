@@ -15,7 +15,7 @@
       @for (item of (cartItems$ | async) ?? []; track item.cartItemId) {
         <li class="cart-row flex items-end justify-between">
           <div class="flex-1 min-w-0 mr-2">
-            <span class="block">{{ item.pizza.name }} x{{ item.quantity }} - {{ (item.pizza.price * item.quantity) | currency:'EUR':'symbol':'1.2-2' }}</span>
+            <span class="block">{{ item.pizza.name }} x{{ item.quantity }} - {{ ((item.pizza.price + item.extraPrice) * item.quantity) | currency:'EUR':'symbol':'1.2-2' }}</span>
             @if (item.addedIngredients.length > 0) {
               <span class="block text-xs text-green-700">aggiunte: {{ item.addedIngredients.join(', ') }}</span>
             }

@@ -58,6 +58,13 @@
 
                   @if (activeCustomization !== null && activeCustomization.pizza.id === item.id) {
                     <div class="customize-panel">
+                      <div class="customize-panel__price-preview">
+                        <span class="customize-panel__price-base">Prezzo base: {{ item.price | currency:'EUR':'symbol':'1.2-2' }}</span>
+                        @if (currentExtraPrice > 0) {
+                          <span class="customize-panel__price-extra">+ {{ currentExtraPrice | currency:'EUR':'symbol':'1.2-2' }} (aggiunte)</span>
+                          <span class="customize-panel__price-total">Totale: {{ currentTotalPrice | currency:'EUR':'symbol':'1.2-2' }}</span>
+                        }
+                      </div>
 
                       @if (item.baseIngredients.length > 0) {
                         <div class="customize-panel__section">
@@ -81,13 +88,13 @@
                         <div class="customize-panel__add-row">
                           <select
                             [(ngModel)]="activeCustomization!.newIngredient"
+                            (change)="onIngredientSelected(activeCustomization!.newIngredient)"
                             class="customize-panel__select">
                             <option value="">— Seleziona ingrediente —</option>
                             @for (ing of getAvailableIngredients(); track ing.id) {
-                              <option [value]="ing.nome">{{ ing.nome }} ({{ ing.categoria }})</option>
+                              <option [value]="ing.nome">{{ ing.nome }} ({{ ing.categoria }}) + {{ ing.prezzo | currency:'EUR':'symbol':'1.2-2' }}</option>
                             }
                           </select>
-                          <button (click)="addIngredient()" class="btn-action btn-action--add">+</button>
                         </div>
                         @if (activeCustomization!.addedIngredients.length > 0) {
                           <div class="customize-panel__chips mt-2">
