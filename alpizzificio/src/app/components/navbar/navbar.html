@@ -41,9 +41,10 @@
   <ul>
     <li><a routerLink="" (click)="toggleMenu()">Home</a></li>
     <li class="mobile-menu-item--has-sub">
-      <div class="mobile-menu-item__header" (click)="mobileMenuExpanded = !mobileMenuExpanded">
-        <a routerLink="/menu" (click)="$event.stopPropagation(); toggleMenu()">Menu</a>
-        <span class="mobile-menu-chevron" [class.mobile-menu-chevron--open]="mobileMenuExpanded">&#8250;</span>
+      <div class="mobile-menu-item__header">
+        <a routerLink="/menu" (click)="toggleMenu()">Menu</a>
+        <span class="mobile-menu-item__spacer" (click)="mobileMenuExpanded = !mobileMenuExpanded"></span>
+        <span class="mobile-menu-chevron" [class.mobile-menu-chevron--open]="mobileMenuExpanded" (click)="mobileMenuExpanded = !mobileMenuExpanded">&#8250;</span>
       </div>
       @if (mobileMenuExpanded) {
         <ul class="mobile-submenu">
