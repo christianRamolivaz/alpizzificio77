@@ -1,6 +1,6 @@
 [build]
-  publish = "dist/alpizzificio/browser"
-  command = "npm run build"
+  command = "npm install && npm run build "
+  publish = "alpizzificio/dist/alpizzificio/browser"
 
 # Redirect SPA (Angular) - tutte le rotte verso index.html
 [[redirects]]
