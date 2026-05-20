@@ -7,7 +7,7 @@
       @if (allCategories().length > 0) {
         <div class="category-filter">
           <p class="category-filter__label">Filtra per categoria</p>
-          <div class="category-filter__chips">
+          <div class="category-panel__chips">
             @for (group of allCategories(); track group.category) {
               <label class="category-chip" [class.category-chip--active]="isCategorySelected(group.category)">
                 <input type="checkbox"
