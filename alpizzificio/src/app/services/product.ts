@@ -9,6 +9,8 @@ export interface Pizza {
   description: string;
   baseIngredients: string[];
   price: number;
+  importoBaby?: number | null;
+  isBaby: boolean;
 }
 
 export type MenuItem = Pizza;

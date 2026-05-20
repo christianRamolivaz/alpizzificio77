@@ -41,14 +41,18 @@
           @if (!isCategoryCollapsed(group.category)) {
             <ul class="menu-list">
               @for (item of group.items; track item.id) {
-                <li class="menu-item">
-                  <div class="menu-item__row">
-                    <div class="menu-item__info">
-                      <span class="menu-item__name">{{ item.name }}</span>
-                      <span class="menu-item__price">{{ item.price | currency:'EUR':'symbol':'1.2-2' }}</span>
+                <li class="menu-item" [class.menu-item--expanded]="activeCustomization !== null && activeCustomization.pizza.id === item.id">
+                  <div class="menu-item__header">
+                    <div class="menu-item__row">
+                      <div class="menu-item__info">
+                        <span class="menu-item__name">{{ item.name }} </span>
+                      </div>
                     </div>
                     <div class="menu-item__actions">
-                      <button class="btn-action btn-action--add" (click)="quickAddToCart(item)">+</button>
+                      <span class="menu-item__price">{{ item.price | currency:'EUR':'symbol':'1.2-2' }}</span>
+                      <button class="btn-action btn-action--add" (click)="activeCustomization !== null && activeCustomization.pizza.id === item.id ? handleAddButtonClick() : quickAddToCart(item)">
+                        +                        
+                      </button>
                       @if (canCustomize(group.category)) {
                         <button class="btn-action btn-action--edit" (click)="openCustomization(item)">Modifica</button>
                       }
@@ -59,12 +63,28 @@
                   @if (activeCustomization !== null && activeCustomization.pizza.id === item.id) {
                     <div class="customize-panel">
                       <div class="customize-panel__price-preview">
-                        <span class="customize-panel__price-base">Prezzo base: {{ item.price | currency:'EUR':'symbol':'1.2-2' }}</span>
+                        <span class="customize-panel__price-base">Prezzo base: {{ (activeCustomization!.isBaby ? (item.importoBaby ?? item.price) : item.price) | currency:'EUR':'symbol':'1.2-2' }}</span>
                         @if (currentExtraPrice > 0) {
                           <span class="customize-panel__price-extra">+ {{ currentExtraPrice | currency:'EUR':'symbol':'1.2-2' }} (aggiunte)</span>
                           <span class="customize-panel__price-total">Totale: {{ currentTotalPrice | currency:'EUR':'symbol':'1.2-2' }}</span>
                         }
                       </div>
+
+                      @if (item.importoBaby !== null && item.importoBaby !== undefined) {
+                        <div class="customize-panel__section">
+                          <p class="customize-panel__label">Formato</p>
+                          <label class="baby-toggle" [class.baby-toggle--active]="activeCustomization!.isBaby">
+                            <input type="checkbox"
+                              class="baby-toggle__check"
+                              [checked]="activeCustomization!.isBaby"
+                              (change)="activeCustomization!.isBaby = !activeCustomization!.isBaby">
+                            <span class="baby-toggle__text">
+                              Versione Baby
+                              <small>{{ item.importoBaby | currency:'EUR':'symbol':'1.2-2' }} invece di {{ item.price | currency:'EUR':'symbol':'1.2-2' }}</small>
+                            </span>
+                          </label>
+                        </div>
+                      }
 
                       @if (item.baseIngredients.length > 0) {
                         <div class="customize-panel__section">

@@ -21,6 +21,12 @@ export class CartComponent {
   cartCount$ = this.cartItems$.pipe(
     map((items: CartItem[]) => items.reduce((sum: number, item: CartItem) => sum + item.quantity, 0))
   );
+  cartTotal$ = this.cartItems$.pipe(
+    map((items: CartItem[]) => items.reduce((sum: number, item: CartItem) => {
+      const price = item.isBaby && item.pizza.importoBaby ? item.pizza.importoBaby : item.pizza.price;
+      return sum + (price + item.extraPrice) * item.quantity;
+    }, 0))
+  );
 
   toggleCart() {
     this.showCart = !this.showCart;
@@ -47,6 +53,11 @@ export class CartComponent {
   removeItem(cartItemId: string) {
     this.cartService.removeFromCart(cartItemId);
     this.showFeedback('Riga rimossa');
+  }
+
+  clearCart() {
+    this.cartService.clearCart();
+    this.showFeedback('Carrello svuotato');
   }
 
   isCustomized(item: CartItem): boolean { return isCustomized(item); }

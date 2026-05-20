@@ -16,6 +16,8 @@ export interface CartItem {
   note: string;
   /** Costo aggiuntivo degli ingredienti extra (somma dei prezzi degli ingredienti aggiunti). */
   extraPrice: number;
+  /** Se true, usa il prezzo baby invece del prezzo normale. */
+  isBaby: boolean;
 }
 
 export interface CartOrder {
@@ -38,7 +40,7 @@ export class CartService {
    */
   addToCart(
     pizza: Pizza,
-    customization?: { addedIngredients?: string[]; removedIngredients?: string[]; note?: string; extraPrice?: number }
+    customization?: { addedIngredients?: string[]; removedIngredients?: string[]; note?: string; extraPrice?: number; isBaby?: boolean }
   ): string {
     const cartItemId = crypto.randomUUID();
     this.items.push({
@@ -49,6 +51,7 @@ export class CartService {
       removedIngredients: customization?.removedIngredients ?? [],
       note: customization?.note ?? '',
       extraPrice: customization?.extraPrice ?? 0,
+      isBaby: customization?.isBaby ?? false,
     });
     this.items$.next([...this.items]);
     return cartItemId;

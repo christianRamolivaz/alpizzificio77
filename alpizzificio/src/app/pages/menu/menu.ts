@@ -20,9 +20,9 @@ export interface CustomizationState {
   addedIngredients: string[];
   note: string;
   newIngredient: string;
+  isBaby: boolean;
 }
 
-/** Categorie per cui non ha senso la personalizzazione ingredienti */
 const NO_CUSTOMIZE_CATEGORIES = new Set(['Bevande', 'Dolci', 'Antipasti e Fritti', 'Calzoncini Fritti Ripieni']);
 
 @Component({
@@ -34,6 +34,10 @@ const NO_CUSTOMIZE_CATEGORIES = new Set(['Bevande', 'Dolci', 'Antipasti e Fritti
 export class Menu {
   private productService = inject(Product);
   private cartService = inject(CartService);
+
+  selectedCategories = signal(new Set<string>());
+  collapsedCategories = signal(new Set<string>());
+  activeCustomization: CustomizationState | null = null;
 
   constructor(private titleService: Title, private meta: Meta) {
     this.titleService.setTitle('Menu Pizze – Al Pizzificio 77 | Aymavilles');
@@ -81,17 +85,10 @@ export class Menu {
     );
   }
 
-  /** Set delle categorie selezionate nel filtro (vuoto = tutte) */
-  selectedCategories = signal(new Set<string>());
-
-  /** Set delle categorie collassate */
-  collapsedCategories = signal(new Set<string>());
-
   filteredCategories = computed(() => {
     const sel = this.selectedCategories();
     const all = this.allCategories();
-    if (sel.size === 0) return all;
-    return all.filter(g => sel.has(g.category));
+    return sel.size === 0 ? all : all.filter(g => sel.has(g.category));
   });
 
   isCategorySelected(cat: string): boolean {
@@ -126,26 +123,20 @@ export class Menu {
     return !NO_CUSTOMIZE_CATEGORIES.has(category);
   }
 
-  /** Calcola il costo extra degli ingredienti aggiunti nella personalizzazione attiva */
   get currentExtraPrice(): number {
     if (!this.activeCustomization) return 0;
-    const ingredients = this.allIngredients();
     return this.activeCustomization.addedIngredients.reduce((sum, name) => {
-      const found = ingredients.find(i => i.nome === name);
+      const found = this.allIngredients().find(i => i.nome === name);
       return sum + (found?.prezzo ?? 0);
     }, 0);
   }
 
-  /** Prezzo totale (base + extra) mostrato nel pannello di personalizzazione */
   get currentTotalPrice(): number {
     if (!this.activeCustomization) return 0;
-    return this.activeCustomization.pizza.price + this.currentExtraPrice;
-  }
-
-  activeCustomization: CustomizationState | null = null;
-
-  quickAddToCart(pizza: Pizza) {
-    this.cartService.addOrIncrementPlain(pizza);
+    const basePrice = this.activeCustomization.isBaby 
+      ? (this.activeCustomization.pizza.importoBaby ?? this.activeCustomization.pizza.price)
+      : this.activeCustomization.pizza.price;
+    return basePrice + this.currentExtraPrice;
   }
 
   openCustomization(pizza: Pizza) {
@@ -159,6 +150,7 @@ export class Menu {
       addedIngredients: [],
       note: '',
       newIngredient: '',
+      isBaby: false,
     };
   }
 
@@ -168,11 +160,9 @@ export class Menu {
 
   toggleIngredient(ingredient: string) {
     if (!this.activeCustomization) return;
-    if (this.activeCustomization.removedIngredients.has(ingredient)) {
-      this.activeCustomization.removedIngredients.delete(ingredient);
-    } else {
-      this.activeCustomization.removedIngredients.add(ingredient);
-    }
+    this.activeCustomization.removedIngredients.has(ingredient)
+      ? this.activeCustomization.removedIngredients.delete(ingredient)
+      : this.activeCustomization.removedIngredients.add(ingredient);
   }
 
   addIngredient() {
@@ -198,15 +188,39 @@ export class Menu {
       this.activeCustomization.addedIngredients.filter(i => i !== ingredient);
   }
 
+  isCustomizationModified(): boolean {
+    if (!this.activeCustomization) return false;
+    return (
+      this.activeCustomization.removedIngredients.size > 0 ||
+      this.activeCustomization.addedIngredients.length > 0 ||
+      this.activeCustomization.note.trim() !== '' ||
+      this.activeCustomization.isBaby !== false
+    );
+  }
+
+  handleAddButtonClick() {
+    if (!this.activeCustomization) return;
+    if (!this.isCustomizationModified()) {
+      this.quickAddToCart(this.activeCustomization.pizza);
+    } else {
+      this.confirmAddToCart();
+    }
+    this.activeCustomization = null;
+  }
+
+  quickAddToCart(pizza: Pizza) {
+    this.cartService.addOrIncrementPlain(pizza);
+  }
+
   confirmAddToCart() {
     if (!this.activeCustomization) return;
-    const { pizza, removedIngredients, addedIngredients, note } = this.activeCustomization;
-    const extraPrice = this.currentExtraPrice;
+    const { pizza, removedIngredients, addedIngredients, note, isBaby } = this.activeCustomization;
     this.cartService.addToCart(pizza, {
       removedIngredients: [...removedIngredients],
       addedIngredients: [...addedIngredients],
       note,
-      extraPrice,
+      extraPrice: this.currentExtraPrice,
+      isBaby,
     });
     this.activeCustomization = null;
   }

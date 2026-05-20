@@ -35,7 +35,10 @@ export class Summary implements OnInit {
 
   cartItems$ = this.cartService.getItems();
   totale$ = this.cartItems$.pipe(
-    map((items: CartItem[]) => items.reduce((sum: number, item: CartItem) => sum + ((item.pizza.price + item.extraPrice) * item.quantity), 0))
+    map((items: CartItem[]) => items.reduce((sum: number, item: CartItem) => {
+      const basePrice = item.isBaby && item.pizza.importoBaby ? item.pizza.importoBaby : item.pizza.price;
+      return sum + ((basePrice + item.extraPrice) * item.quantity);
+    }, 0))
   );
 
   
@@ -79,7 +82,8 @@ export class Summary implements OnInit {
 
   static formatOrderMessage(items: CartItem[], fasciaOraria: string, indirizzo: string, note: string, nominativo: string = ""): string {
     const righe = items.map(item => {
-      let riga = ` - ${item.quantity}x ${item.pizza.name}`;
+      const sizeSuffix = item.isBaby ? " (Baby)" : "";
+      let riga = ` - ${item.quantity}x ${item.pizza.name}${sizeSuffix}`;
       if (item.addedIngredients.length > 0) riga += `\n   aggiunte: ${item.addedIngredients.join(', ')}`;
       const noteLine = buildNoteText(item);
       if (noteLine) riga += `\n   note: ${noteLine}`;

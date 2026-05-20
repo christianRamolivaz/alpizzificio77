@@ -11,7 +11,7 @@
                         <div class="flex justify-between items-center gap-2">
                            <div class="flex-1">
                               <p class="text-gray-700 text-base font-semibold">
-                                 {{ item.pizza.name }} x{{ item.quantity }} — {{ ((item.pizza.price + item.extraPrice) * item.quantity) |
+                                 {{ item.pizza.name }}{{ item.isBaby ? ' (Baby)' : '' }} x{{ item.quantity }} — {{ (((item.isBaby && item.pizza.importoBaby ? item.pizza.importoBaby : item.pizza.price) + item.extraPrice) * item.quantity) |
                                  currency:'EUR':'symbol':'1.2-2' }}
                               </p>
                               @if (item.addedIngredients.length > 0) {
