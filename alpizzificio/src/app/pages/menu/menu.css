@@ -9,6 +9,59 @@
   .menu-title { font-size: 2.75rem; }
 }
 
+.search-bar {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: #f9fafb;
+  border: 1.5px solid #e5e7eb;
+  border-radius: 999px;
+  padding: 0.45rem 0.85rem;
+  margin-bottom: 1rem;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.search-bar:focus-within {
+  border-color: #d1121d;
+  box-shadow: 0 0 0 3px rgba(209,18,29,0.12);
+}
+
+.search-bar__icon {
+  font-size: 0.95rem;
+  flex-shrink: 0;
+  opacity: 0.55;
+}
+
+.search-bar__input {
+  flex: 1;
+  border: none;
+  background: transparent;
+  outline: none;
+  font-size: 0.875rem;
+  color: #1f2937;
+  min-width: 0;
+}
+
+.search-bar__input::placeholder {
+  color: #9ca3af;
+}
+
+.search-bar__clear {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0 0.2rem;
+  font-size: 1rem;
+  line-height: 1;
+  opacity: 0.6;
+  transition: opacity 0.15s;
+  flex-shrink: 0;
+}
+
+.search-bar__clear:hover {
+  opacity: 1;
+}
+
 .category-filter {
   background: #f9fafb;
   border: 1.5px solid #e5e7eb;

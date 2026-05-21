@@ -38,6 +38,7 @@ export class Menu {
   selectedCategories = signal(new Set<string>());
   collapsedCategories = signal(new Set<string>());
   activeCustomization: CustomizationState | null = null;
+  searchQuery = signal('');
 
   constructor(private titleService: Title, private meta: Meta) {
     this.titleService.setTitle('Menu Pizze – Al Pizzificio 77 | Aymavilles');
@@ -87,8 +88,27 @@ export class Menu {
 
   filteredCategories = computed(() => {
     const sel = this.selectedCategories();
-    const all = this.allCategories();
-    return sel.size === 0 ? all : all.filter(g => sel.has(g.category));
+    const query = this.searchQuery().trim().toLowerCase();
+    let groups = this.allCategories();
+
+    if (sel.size > 0) {
+      groups = groups.filter(g => sel.has(g.category));
+    }
+
+    if (query) {
+      groups = groups
+        .map(g => ({
+          ...g,
+          items: g.items.filter(item =>
+            item.name.toLowerCase().includes(query) ||
+            (item.description ?? '').toLowerCase().includes(query) ||
+            (item.baseIngredients ?? []).some(ing => ing.toLowerCase().includes(query))
+          ),
+        }))
+        .filter(g => g.items.length > 0);
+    }
+
+    return groups;
   });
 
   isCategorySelected(cat: string): boolean {
@@ -105,6 +125,10 @@ export class Menu {
 
   clearCategoryFilter() {
     this.selectedCategories.set(new Set());
+  }
+
+  clearSearch() {
+    this.searchQuery.set('');
   }
 
   isCategoryCollapsed(cat: string): boolean {

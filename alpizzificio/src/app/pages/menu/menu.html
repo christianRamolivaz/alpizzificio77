@@ -3,6 +3,21 @@
   <div class="menu-wrapper">
     <div class="menu-card">
 
+      <!-- RICERCA LIBERA -->
+      <div class="search-bar">
+        <span class="search-bar__icon">🔍</span>
+        <input
+          class="search-bar__input"
+          type="text"
+          placeholder="Cerca per ingrediente o descrizione…"
+          [value]="searchQuery()"
+          (input)="searchQuery.set($any($event.target).value)"
+        />
+        @if (searchQuery()) {
+          <button class="search-bar__clear" (click)="clearSearch()" aria-label="Svuota ricerca">🗑️</button>
+        }
+      </div>
+
       <!-- FILTRO CATEGORIE -->
       @if (allCategories().length > 0) {
         <div class="category-filter">
