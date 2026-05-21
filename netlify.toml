@@ -1,6 +1,7 @@
 [build]
   command = "cd alpizzificio && npm install && npm run build"
   publish = "alpizzificio/dist/alpizzificio/browser"
+  base = "alpizzificio"
 
 [build.environment]
   NODE_VERSION = "24"
