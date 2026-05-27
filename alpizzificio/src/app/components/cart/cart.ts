@@ -38,7 +38,7 @@ export class CartComponent {
     this.feedbackId = window.setTimeout(() => {
       this.feedbackText = '';
       this.feedbackId = null;
-    }, 1200);
+    }, 600);
   }
 
   incrementQuantity(cartItemId: string) {
@@ -47,12 +47,10 @@ export class CartComponent {
 
   decrementItem(cartItemId: string) {
     this.cartService.decrementQuantity(cartItemId);
-    this.showFeedback('Quantità aggiornata');
   }
 
   removeItem(cartItemId: string) {
     this.cartService.removeFromCart(cartItemId);
-    this.showFeedback('Riga rimossa');
   }
 
   clearCart() {

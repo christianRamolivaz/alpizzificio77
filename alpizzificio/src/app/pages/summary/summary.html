@@ -77,16 +77,32 @@
               (ngModelChange)="nominativo.set($event)"
               placeholder="Es. Mario Rossi">
           </div>
-          <div class="summary-field-group">
-            <label class="summary-label" for="indirizzo">Indirizzo di consegna</label>
-            <input
-              id="indirizzo"
-              class="summary-field"
-              type="text"
-              [ngModel]="indirizzo()"
-              (ngModelChange)="indirizzo.set($event)"
-              placeholder="Es. Via Roma 123, Aymavilles (AO)">
+
+          <!-- TOGGLE RITIRA DA NOI -->
+          <div class="summary-field-group summary-pickup-toggle">
+            <label class="summary-pickup__label">
+              <input
+                type="checkbox"
+                class="summary-pickup__check"
+                [ngModel]="ritiraDaNoi()"
+                (ngModelChange)="onRitiraDaNoiChange($event)">
+              <span class="summary-pickup__text">Ritiro in sede</span>
+            </label>
           </div>
+
+          @if (!ritiraDaNoi()) {
+            <div class="summary-field-group">
+              <label class="summary-label" for="indirizzo">Indirizzo di consegna</label>
+              <input
+                id="indirizzo"
+                class="summary-field"
+                type="text"
+                [ngModel]="indirizzo()"
+                (ngModelChange)="indirizzo.set($event)"
+                placeholder="Es. Via Roma 123, Aymavilles (AO)">
+            </div>
+          }
+
           <div class="summary-field-group">
             <label class="summary-label" for="fasciaOraria">Fascia oraria di consegna</label>
             <select

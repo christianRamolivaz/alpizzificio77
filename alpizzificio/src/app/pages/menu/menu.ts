@@ -135,6 +135,14 @@ export class Menu {
     return this.collapsedCategories().has(cat);
   }
 
+  hasAnyCategoryCollapsed(): boolean {
+    return this.collapsedCategories().size > 0;
+  }
+
+  expandAllCategories() {
+    this.collapsedCategories.set(new Set());
+  }
+
   toggleCategoryCollapse(cat: string) {
     this.collapsedCategories.update(prev => {
       const next = new Set(prev);
