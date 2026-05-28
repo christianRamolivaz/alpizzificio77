@@ -1,5 +1,8 @@
 <section class="cpage pt-6 md:pt-0">
   <h1 class="menu-title">Il Nostro Menu</h1>
+  <div class="pizza-image-container mb-8">
+    <img src="/pizza.jpg" alt="Pizza" class="mx-auto" style="max-width: 300px; width: 100%; height: auto;" />
+  </div>
   <div class="menu-wrapper">
     <div class="menu-card">
 
@@ -71,7 +74,13 @@
                           <span class="menu-item__price">
                             {{ item.importoBaby | currency:'EUR':'symbol':'1.2-2' }}
                           </span>
-                          <span class="menu-item__price-hint menu-item__price-hint--baby">baby</span>
+                          <span class="menu-item__price-hint menu-item__price-hint--baby">
+                          @if(group.category !== 'Pizze Bianche' && group.category !== 'Pizze Rosse'){
+                            normale
+                          }@else {
+                            baby
+                          }
+                          </span>
                         </span>
                         <button class="btn-action btn-action--add" (click)="activeCustomization !== null && activeCustomization.pizza.id === item.id ? handleAddButtonClick() : quickAddToCart(item)">
                           +
@@ -86,7 +95,11 @@
                         </span>
                         <span class="menu-item__price-hint">
                           @if(item.importoBaby !== null && item.importoBaby !== undefined){
+                              @if(group.category !== 'Pizze Bianche' && group.category !== 'Pizze Rosse'){
+                                maxi
+                            }@else {
                               normale
+                            }                          
                           }@else {&nbsp;}
                         </span>
                           <span class="menu-item__price-hint"></span>
@@ -117,7 +130,7 @@
                    @if (canCustomize(group.category)) {
                     <div class="text-center">
 
-                      <button class="btn-action btn-action--edit" (click)="openCustomization(item)">Modifica</button>
+                      <button class="btn-action btn-action--edit" (click)="openCustomization(item)">Personalizza</button>
                     </div>
                       }
                   </div>
@@ -218,6 +231,8 @@
       }
 
     
+
+      <p class="text-xs text-gray-400 text-center mt-4 px-4">* Prodotto surgelato</p>
 
       <div class="menu-order-btn">
         <button class="bg-primary hover:bg-hPrimary text-white font-bold py-2 px-6 rounded-full" routerLink="/riepilogo">

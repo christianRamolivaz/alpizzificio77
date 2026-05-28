@@ -42,14 +42,17 @@ export class CartComponent {
   }
 
   incrementQuantity(cartItemId: string) {
+    this.showFeedback('Aggiunto');
     this.cartService.incrementQuantity(cartItemId);
   }
 
   decrementItem(cartItemId: string) {
+    this.showFeedback('Rimosso');
     this.cartService.decrementQuantity(cartItemId);
   }
 
   removeItem(cartItemId: string) {
+    this.showFeedback('Carrello svuotato');
     this.cartService.removeFromCart(cartItemId);
   }
 

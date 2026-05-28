@@ -1,6 +1,30 @@
 <section class="flex flex-col justify-center items-center cpage">
-   <div class="pizza-image-container mb-8">
-      <img src="/graffito.jpeg" alt="Pizza" style="max-width: 600px; width: 100%; height: auto;" />
+   
+   <!-- Carousel -->
+   <div class="carousel-wrapper mb-8">
+      <div class="carousel-container">
+         <div class="carousel-track"
+              [style.transform]="'translateX(-' + currentSlide * 100 + '%)'"
+              [style.transition]="transitioning ? 'transform 0.5s ease-in-out' : 'none'">
+            @for (slide of displaySlides; track $index) {
+               <div class="carousel-slide">
+                  <img [src]="slide" alt="Al Pizzificio 77" class="carousel-img" loading="lazy" />
+               </div>
+            }
+         </div>
+         <button class="carousel-btn carousel-btn-prev" (click)="onManualNav('prev')" aria-label="Immagine precedente">&#8249;</button>
+         <button class="carousel-btn carousel-btn-next" (click)="onManualNav('next')" aria-label="Immagine successiva">&#8250;</button>
+      </div>
+      <div class="carousel-dots">
+         @for (slide of realSlides; track slide; let i = $index) {
+            <button
+               class="carousel-dot"
+               [class.active]="i === activeRealIndex"
+               (click)="goToSlide(i)"
+               [attr.aria-label]="'Vai all\' immagine ' + (i + 1)"
+            ></button>
+         }
+      </div>
    </div>
    
    <!-- <h1 class="text-5xl font-bold text-amber-900 mb-2">AL PIZZIFICIO 77</h1> -->
