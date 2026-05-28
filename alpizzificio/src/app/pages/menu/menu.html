@@ -1,5 +1,8 @@
 <section class="cpage pt-6 md:pt-0">
   <h1 class="menu-title">Il Nostro Menu</h1>
+  <div class="pizza-image-container mb-8">
+    <img src="/pizza.jpg" alt="Pizza" class="mx-auto" style="max-width: 300px; width: 100%; height: auto;" />
+  </div>
   <div class="menu-wrapper">
     <div class="menu-card">
 
@@ -33,10 +36,13 @@
               </label>
             }
           </div>
-          @if (selectedCategories().size > 0) {
+          @if (selectedCategories().size > 0 ) {
             <button (click)="clearCategoryFilter()" class="category-filter__reset">
               Mostra tutto
-            </button>
+            </button><br/>
+          }
+          @if (hasAnyCategoryCollapsed()) {
+            <button (click)="expandAllCategories()" class="category-filter__reset">Espandi tutte le categorie</button>
           }
         </div>
       }
@@ -63,15 +69,47 @@
                       <div class="menu-item__info">
                         <span class="menu-item__name">{{ item.name }} </span>
                       </div>
-                      <span class="menu-item__price">{{ item.price | currency:'EUR':'symbol':'1.2-2' }}</span>
+                      @if (item.importoBaby !== null && item.importoBaby !== undefined) {
+                        <span class="menu-item__price-block">
+                          <span class="menu-item__price">
+                            {{ item.importoBaby | currency:'EUR':'symbol':'1.2-2' }}
+                          </span>
+                          <span class="menu-item__price-hint menu-item__price-hint--baby">
+                          @if(group.category !== 'Pizze Bianche' && group.category !== 'Pizze Rosse'){
+                            normale
+                          }@else {
+                            baby
+                          }
+                          </span>
+                        </span>
+                        <button class="btn-action btn-action--add" (click)="activeCustomization !== null && activeCustomization.pizza.id === item.id ? handleAddButtonClick() : quickAddToCart(item)">
+                          +
+                        </button>
+                      }@else {
+                        <span class="menu-item__price-block"></span>&nbsp;
+                      }
+                      
+                      <span class="menu-item__price-block">
+                        <span class="menu-item__price">
+                          {{ item.price | currency:'EUR':'symbol':'1.2-2' }}
+                        </span>
+                        <span class="menu-item__price-hint">
+                          @if(item.importoBaby !== null && item.importoBaby !== undefined){
+                              @if(group.category !== 'Pizze Bianche' && group.category !== 'Pizze Rosse'){
+                                maxi
+                            }@else {
+                              normale
+                            }                          
+                          }@else {&nbsp;}
+                        </span>
+                          <span class="menu-item__price-hint"></span>
+                      </span>
                       <button class="btn-action btn-action--add" (click)="activeCustomization !== null && activeCustomization.pizza.id === item.id ? handleAddButtonClick() : quickAddToCart(item)">
                         +
                       </button>
-                      @if (canCustomize(group.category)) {
-                        <button class="btn-action btn-action--edit" (click)="openCustomization(item)">Modifica</button>
-                      }
+                     
                     </div>
-                    @if (item.importoBaby !== null && item.importoBaby !== undefined && group.category !== 'Pizze Bianche' && group.category !== 'Pizze Rosse') {
+                    <!-- @if (item.importoBaby !== null && item.importoBaby !== undefined && group.category !== 'Pizze Bianche' && group.category !== 'Pizze Rosse') {
                       <div class="menu-item__baby-row">
                         <span class="menu-item__baby-label">Formato Baby</span>
                         <span class="menu-item__price menu-item__price--baby">{{ item.importoBaby | currency:'EUR':'symbol':'1.2-2' }}</span>
@@ -87,8 +125,14 @@
                           <span class="menu-item__action-spacer"></span>
                         }
                       </div>
-                    }
+                    } -->
                     <p class="menu-item__desc">{{ item.description }}</p>
+                   @if (canCustomize(group.category)) {
+                    <div class="text-center">
+
+                      <button class="btn-action btn-action--edit" (click)="openCustomization(item)">Personalizza</button>
+                    </div>
+                      }
                   </div>
 
                   @if (activeCustomization !== null && activeCustomization.pizza.id === item.id) {
@@ -185,6 +229,10 @@
       @if (filteredCategories().length === 0 && allCategories().length === 0) {
         <p class="text-center text-gray-400 py-12 text-sm">Caricamento menu...</p>
       }
+
+    
+
+      <p class="text-xs text-gray-400 text-center mt-4 px-4">* Prodotto surgelato</p>
 
       <div class="menu-order-btn">
         <button class="bg-primary hover:bg-hPrimary text-white font-bold py-2 px-6 rounded-full" routerLink="/riepilogo">

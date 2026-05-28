@@ -38,21 +38,22 @@ export class CartComponent {
     this.feedbackId = window.setTimeout(() => {
       this.feedbackText = '';
       this.feedbackId = null;
-    }, 1200);
+    }, 600);
   }
 
   incrementQuantity(cartItemId: string) {
+    this.showFeedback('Aggiunto');
     this.cartService.incrementQuantity(cartItemId);
   }
 
   decrementItem(cartItemId: string) {
+    this.showFeedback('Rimosso');
     this.cartService.decrementQuantity(cartItemId);
-    this.showFeedback('Quantità aggiornata');
   }
 
   removeItem(cartItemId: string) {
+    this.showFeedback('Carrello svuotato');
     this.cartService.removeFromCart(cartItemId);
-    this.showFeedback('Riga rimossa');
   }
 
   clearCart() {

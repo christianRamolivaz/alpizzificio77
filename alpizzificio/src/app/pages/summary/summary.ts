@@ -28,6 +28,7 @@ export class Summary implements OnInit {
   note = signal("");
   nominativo = signal("");
   dataConsegna = signal(new Date());
+  ritiraDaNoi = signal(false);
 
   private readonly ORARI_BASE = [
     '19:00/19:30', '19:30/20:00', '20:00/20:30', '20:30/21:00', '21:00/21:30', '21:30/22:00'
@@ -61,6 +62,11 @@ export class Summary implements OnInit {
     });
   }
 
+  onRitiraDaNoiChange(val: boolean) {
+    this.ritiraDaNoi.set(val);
+    if (val) this.indirizzo.set('');
+  }
+
   toggleNotesPanel() {
     this.notesExpanded.update(val => !val);
   }
@@ -80,7 +86,7 @@ export class Summary implements OnInit {
   isCustomized(item: CartItem): boolean { return isCustomized(item); }
   getNoteText(item: CartItem): string { return buildNoteText(item); }
 
-  static formatOrderMessage(items: CartItem[], fasciaOraria: string, indirizzo: string, note: string, nominativo: string = ""): string {
+  static formatOrderMessage(items: CartItem[], fasciaOraria: string, indirizzo: string, note: string, nominativo: string = "", ritiraDaNoi: boolean = false): string {
     const righe = items.map(item => {
       const sizeSuffix = item.isBaby ? " (Baby)" : "";
       let riga = ` - ${item.quantity}x ${item.pizza.name}${sizeSuffix}`;
@@ -90,13 +96,17 @@ export class Summary implements OnInit {
       return riga;
     });
     const messageParts = [];
+    messageParts.push(`Ciao! vorrei effettuare il seguente ordine:`);
     if (nominativo.trim().length > 0) {
       messageParts.push(`Nominativo: ${nominativo}`);
     }
-    messageParts.push(`Ciao! vorrei effettuare il seguente ordine:`);
     messageParts.push(...righe);
     messageParts.push(`Orario indicato: ${fasciaOraria}`);
-    messageParts.push(`Presso: ${indirizzo}`);
+    if (ritiraDaNoi) {
+      messageParts.push(`Ritiro in sede 🏠`);
+    } else {
+      messageParts.push(`Presso: ${indirizzo}`);
+    }
     if (note.length > 0) messageParts.push(`Note: ${note}`);
     return messageParts.join('\n');
   }
@@ -105,7 +115,7 @@ export class Summary implements OnInit {
     if (!(await this.validateCart())) return;
 
     const items = await this.getCartItems();
-    const msg = Summary.formatOrderMessage(items, this.fasciaOraria(), this.indirizzo(), this.note(), this.nominativo());
+    const msg = Summary.formatOrderMessage(items, this.fasciaOraria(), this.indirizzo(), this.note(), this.nominativo(), this.ritiraDaNoi());
     
     const conferma = window.confirm('Inviare l\'ordine via WhatsApp?');
     if (conferma) {

@@ -87,7 +87,7 @@
   border-radius: 1.25rem;
   box-shadow: 0 4px 24px rgba(0,0,0,0.09);
   padding: 1.25rem 1rem 1.75rem;
-  overflow-x: hidden;
+  overflow-x: clip;
 }
 
 
@@ -101,8 +101,8 @@
 
 .menu-item__row--main {
   display: grid;
-  grid-template-columns: 1fr auto auto auto;
-  align-items: center;
+  grid-template-columns: 1fr auto auto auto auto;
+  align-items: flex-start;
   width: 100%;
   gap: 0.5rem;
 }
@@ -126,9 +126,11 @@
 }
 
 .menu-item__name {
-  font-size: clamp(0.75rem, 2vw, 0.97rem);
+  font-size: clamp(0.9rem, 2vw, 0.97rem);
   font-weight: 700;
   color: #111827;
+  color: #096616d5;
+  color: #81440afa;
   line-height: 1.3;
   display: flex;
   align-items: center;
@@ -136,16 +138,35 @@
   flex-wrap: wrap;
 }
 
+.menu-item__desc {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: #965213fa;
+  color: #096616d5;
+  line-height: 1;
+  margin: 0;
+}
+
+.menu-item__price-block {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: flex-end;
+  line-height: 1.1;
+  gap: 0.1rem;
+  align-self: flex-end;
+}
+
 .menu-item__price {
   display: inline-block;
   font-size: 0.85rem;
-  color: #fff;
+  color: #d1121d;
   font-weight: 700;
-  background: #d1121d;
+  background: transparent;
   border-radius: 999px;
-  padding: 0.1rem 0.6rem;
+  padding: 0.1rem 0.3rem;
   white-space: nowrap;
   flex-shrink: 0;
+   align-self: flex-end;
 }
 
 .menu-item__price--baby {
