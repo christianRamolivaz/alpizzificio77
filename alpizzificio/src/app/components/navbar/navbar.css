@@ -112,6 +112,7 @@
   transition: opacity 0.2s ease, transform 0.2s ease;
   z-index: 999;
   overflow: hidden;
+  background: linear-gradient(90deg, #ffffecea 20%, #e0c31b9a 100%);
 }
 
 /* Header "Categorie" nel dropdown */
@@ -126,6 +127,7 @@
   color: #9ca3af;
   border-bottom: 1px solid #f3f4f6;
   background: #fafafa;
+  background: linear-gradient(90deg, #ffffecea 20%, #e0c31b9a 100%);
 }
 
 .navbar-dropdown li a {

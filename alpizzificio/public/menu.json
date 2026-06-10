@@ -14,131 +14,11 @@
   {
     "id": 4,
     "category": "Antipasti e Fritti",
-    "name": "Pizzette fritte*",
-    "description": "Tipo gnocco fritto",
+    "name": "Gnocco fritto",
+    "description": "Gnocco fritto",
     "baseIngredients": [],
     "price": 10.0,
     "importoBaby": 6.0,
-    "isBaby": false
-  },
-  {
-    "id": 5,
-    "category": "Antipasti e Fritti",
-    "name": "Olive ascolane*",
-    "description": "Olive ascolane fritte ripiene di carne",
-    "baseIngredients": [
-      "olive",
-      "carne"
-    ],
-    "price": 5.0,
-    "importoBaby": null,
-    "isBaby": false
-  },
-  {
-    "id": 6,
-    "category": "Antipasti e Fritti",
-    "name": "Crocché di patate, salsiccia e friarielli*",
-    "description": "Crocché di patate con salsiccia e friarielli",
-    "baseIngredients": [
-      "patate",
-      "salsiccia",
-      "friarielli"
-    ],
-    "price": 6.0,
-    "importoBaby": null,
-    "isBaby": false
-  },
-  {
-    "id": 7,
-    "category": "Antipasti e Fritti",
-    "name": "Mozzarella in carrozza*",
-    "description": "Mozzarella in carrozza fritta",
-    "baseIngredients": [
-      "mozzarella",
-      "pane"
-    ],
-    "price": 6.0,
-    "importoBaby": null,
-    "isBaby": false
-  },
-   {
-    "id": 8,
-    "category": "Calzoncini Fritti Ripieni",
-    "name": "Margherita Fritta (1 pz)",
-    "description": "Calzoncino fritto con pomodoro, mozzarella, basilico",
-    "baseIngredients": [
-      "pomodoro",
-      "mozzarella",
-      "basilico"
-    ],
-    "price": 5.0,
-    "importoBaby": null,
-    "isBaby": false
-  },
-  {
-    "id": 9,
-    "category": "Calzoncini Fritti Ripieni",
-    "name": "Margherita Fritta (2 pz)",
-    "description": "Calzoncini fritti con pomodoro, mozzarella, basilico",
-    "baseIngredients": [
-      "pomodoro",
-      "mozzarella",
-      "basilico"
-    ],
-    "price": 9.0,
-    "importoBaby": null,
-    "isBaby": false
-  },
-  {
-    "id": 10,
-    "category": "Calzoncini Fritti Ripieni",
-    "name": "Spianata piccante Fritta (1 pz)",
-    "description": "Spianata piccante fritta",
-    "baseIngredients": [
-      "spianata piccante"
-    ],
-    "price": 6.0,
-    "importoBaby": null,
-    "isBaby": false
-  },
-  {
-    "id": 11,
-    "category": "Calzoncini Fritti Ripieni",
-    "name": "Spianata piccante Fritta (2 pz)",
-    "description": "Spianata piccante fritta – 2 pezzi",
-    "baseIngredients": [
-      "spianata piccante"
-    ],
-    "price": 11.0,
-    "importoBaby": null,
-    "isBaby": false
-  },
-  {
-    "id": 12,
-    "category": "Calzoncini Fritti Ripieni",
-    "name": "Prosciutto cotto Fritta (1 pz)",
-    "description": "Calzoncino fritto con pomodoro, mozzarella, prosciutto cotto",
-    "baseIngredients": [
-      "pomodoro",
-      "mozzarella",
-      "prosciutto cotto"
-    ],
-    "price": 6.0,
-    "importoBaby": null,
-    "isBaby": false
-  },
-  {
-    "id": 13,
-    "category": "Calzoncini Fritti Ripieni",
-    "name": "Prosciutto cotto Fritta (2 pz)",
-    "description": "Calzoncini fritti con pomodoro, mozzarella, prosciutto cotto",
-    "baseIngredients": [
-      "pomodoro",
-      "mozzarella",
-      "prosciutto cotto"
-    ],
-    "price": 11.0,
-    "importoBaby": null,
     "isBaby": false
   },
   {
@@ -613,8 +493,68 @@
     "importoBaby": 6.0,
     "isBaby": false
   },
+    {
+    "id": 77,
+    "category": "Bevande",
+    "name": "Acqua naturale 0,5 L",
+    "description": "Acqua naturale – bottiglia 0,5 L",
+    "baseIngredients": [],
+    "price": 1,
+    "importoBaby": null,
+    "isBaby": false
+  },
   {
-    "id": 75,
+    "id": 78,
+    "category": "Bevande",
+    "name": "Acqua frizzante 0,5 L",
+    "description": "Acqua frizzante – bottiglia 0,5 L",
+    "baseIngredients": [],
+    "price": 1,
+    "importoBaby": null,
+    "isBaby": false
+  },
+  {
+    "id": 79,
+    "category": "Bevande",
+    "name": "Coca Cola 0,33 L",
+    "description": "Coca Cola – lattina 33 cl",
+    "baseIngredients": [],
+    "price": 3.5,
+    "importoBaby": null,
+    "isBaby": false
+  },
+  {
+    "id": 80,
+    "category": "Bevande",
+    "name": "Fanta 0,33 L",
+    "description": "Fanta – lattina 33 cl",
+    "baseIngredients": [],
+    "price": 3.5,
+    "importoBaby": null,
+    "isBaby": false
+  },
+  {
+    "id": 81,
+    "category": "Bevande",
+    "name": "Sprite 0,33 L",
+    "description": "Sprite – lattina 33 cl",
+    "baseIngredients": [],
+    "price": 3.5,
+    "importoBaby": null,
+    "isBaby": false
+  },
+  {
+    "id": 82,
+    "category": "Bevande",
+    "name": "Pepsi 0,33 L",
+    "description": "Pepsi – lattina 33 cl",
+    "baseIngredients": [],
+    "price": 3.5,
+    "importoBaby": null,
+    "isBaby": false
+  },
+  {
+    "id": 83,
     "category": "Bevande",
     "name": "Birra in bottiglia 0,33 L",
     "description": "Birra in bottiglia da 33 cl",
@@ -624,7 +564,7 @@
     "isBaby": false
   },
   {
-    "id": 76,
+    "id": 84,
     "category": "Bevande",
     "name": "Birra in bottiglia 0,66 L",
     "description": "Birra in bottiglia da 66 cl",
@@ -634,20 +574,30 @@
     "isBaby": false
   },
   {
-    "id": 77,
+    "id": 85,
     "category": "Bevande",
-    "name": "Bibite in lattina 0,33 L",
-    "description": "Coca Cola, Fanta, Sprite, Pepsi – lattina 33 cl",
+    "name": "Coca Cola 1,5 L",
+    "description": "Coca Cola – bottiglia 1,5 L",
     "baseIngredients": [],
-    "price": 3.0,
+    "price": 5.5,
     "importoBaby": null,
     "isBaby": false
   },
   {
-    "id": 78,
+    "id": 86,
     "category": "Bevande",
-    "name": "Bibite in bottiglia 1,5 L",
-    "description": "Coca Cola, Fanta, Sprite – bottiglia 1,5 L",
+    "name": "Fanta 1,5 L",
+    "description": "Fanta – bottiglia 1,5 L",
+    "baseIngredients": [],
+    "price": 5.5,
+    "importoBaby": null,
+    "isBaby": false
+  },
+  {
+    "id": 87,
+    "category": "Bevande",
+    "name": "Sprite 1,5 L",
+    "description": "Sprite – bottiglia 1,5 L",
     "baseIngredients": [],
     "price": 5.5,
     "importoBaby": null,

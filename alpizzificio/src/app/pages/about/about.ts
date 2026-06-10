@@ -8,7 +8,7 @@ import { Meta, Title } from '@angular/platform-browser';
   styleUrl: './about.css',
 })
 export class About implements OnInit, OnDestroy {
-  slides = ['/bancone.jpg', '/pizza.jpg', '/inforna.jpg'];
+  slides = ['/bancone.jpg', '/pizza.jpg', '/inforna.jpg', '/spomodora.jpg','/condisce.jpg'];
   currentSlide = 0;
   private autoPlayInterval: ReturnType<typeof setInterval> | null = null;
 
