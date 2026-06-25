@@ -115,6 +115,21 @@
   {
     "id": 27,
     "category": "Pizze Rosse",
+    "name": "Speck e Brie",
+    "description": "Pomodoro, mozzarella fior di latte, speck, brie",
+    "baseIngredients": [
+      "pomodoro",
+      "mozzarella fior di latte",
+      "speck",
+      "brie"
+    ],
+    "price": 12.5,
+    "importoBaby": 7.5,
+    "isBaby": false
+  },
+  {
+    "id": 28,
+    "category": "Pizze Rosse",
     "name": "Diavola",
     "description": "Pomodoro, mozzarella fior di latte, spianata piccante, basilico",
     "baseIngredients": [
