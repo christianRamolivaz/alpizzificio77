@@ -15,7 +15,7 @@
   { "id": 15, "nome": "Crema di melanzane",         "categoria": "Condimenti", "prezzo": 2.50 },
   { "id": 16, "nome": "Salsa randù",                "categoria": "Condimenti", "prezzo": 2.00 },
   { "id": 17, "nome": "Prosciutto cotto",           "categoria": "Salumi",     "prezzo": 2.00 },
-  { "id": 18, "nome": "Prosciutto crudo di Parma",  "categoria": "Salumi",     "prezzo": 2.50 },
+  { "id": 18, "nome": "Prosciutto crudo",  "categoria": "Salumi",     "prezzo": 2.50 },
   { "id": 19, "nome": "Spianata piccante",          "categoria": "Salumi",     "prezzo": 2.00 },
   { "id": 20, "nome": "Nduja di Spilinga",          "categoria": "Salumi",     "prezzo": 1.50 },
   { "id": 21, "nome": "Guanciale croccante",        "categoria": "Salumi",     "prezzo": 2.50 },
@@ -33,5 +33,7 @@
   { "id": 33, "nome": "Friarielli",                 "categoria": "Verdure",    "prezzo": 1.50 },
   { "id": 34, "nome": "Patatine fritte",            "categoria": "Verdure",    "prezzo": 1.50 },
   { "id": 35, "nome": "Acciughe del Mediterraneo", "categoria": "Pesce",      "prezzo": 2.50 },
-  { "id": 36, "nome": "Tonno",                      "categoria": "Pesce",      "prezzo": 1.50 }
+  { "id": 36, "nome": "Tonno",                      "categoria": "Salumi",      "prezzo": 1.50 },
+  { "id": 37, "nome": "Speck",                      "categoria": "Pesce",      "prezzo": 2.00 },
+  { "id": 38, "nome": "Brie",                      "categoria": "Formaggi",      "prezzo": 1.50 }
 ]

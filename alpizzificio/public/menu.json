@@ -371,11 +371,11 @@
     "id": 57,
     "category": "Pizze Bianche",
     "name": "La leggera",
-    "description": "Mozzarella fior di latte, pesto di rucola, prosciutto crudo di Parma, pomodorini freschi, stracciatella",
+    "description": "Mozzarella fior di latte, pesto di rucola, prosciutto crudo, pomodorini freschi, stracciatella",
     "baseIngredients": [
       "mozzarella fior di latte",
       "pesto di rucola",
-      "prosciutto crudo di Parma",
+      "prosciutto crudo",
       "pomodorini freschi",
       "stracciatella"
     ],
