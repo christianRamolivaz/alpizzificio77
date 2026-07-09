@@ -383,6 +383,20 @@
     "importoBaby": 9.0,
     "isBaby": false
   },
+ {
+    "id": 58,
+    "category": "Pizze Bianche",
+    "name": "Pere e Gorgonzola",
+    "description": "Mozzarella fior di latte, gorgonzola, pere",
+    "baseIngredients": [
+      "mozzarella fior di latte",
+      "gorgonzola",
+      "pere"
+    ],
+    "price": 11.5,
+    "importoBaby": 6.5,
+    "isBaby": false
+  },  
   {
     "id": 59,
     "category": "Pizze Bianche",
