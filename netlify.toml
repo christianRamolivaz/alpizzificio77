@@ -1,5 +1,5 @@
 [build]
-  command = "cd alpizzificio && npm install && npm run build"
+  command = "cd alpizzificio && npm install --legacy-peer-deps && npm run build"
   publish = "alpizzificio/dist/alpizzificio/browser"
 
 [build.environment]
