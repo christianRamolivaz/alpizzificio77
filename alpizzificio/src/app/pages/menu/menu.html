@@ -82,8 +82,10 @@
                           }
                           </span>
                         </span>
-                        <button class="btn-action btn-action--add" (click)="activeCustomization !== null && activeCustomization.pizza.id === item.id ? handleAddButtonClick() : quickAddToCart(item)">
-                          +
+                        <button class="btn-action btn-action--add" 
+                          [class.btn-action--added]="lastAddedItemId() === 'baby-' + itemIdToString(item.id)"
+                          (click)="activeCustomization !== null && activeCustomization.pizza.id === item.id ? handleAddButtonClick() : quickAddBabyToCart(item)">
+                          {{ lastAddedItemId() === 'baby-' + itemIdToString(item.id) ? '✓' : '+' }}
                         </button>
                       }@else {
                         <span class="menu-item__price-block"></span>&nbsp;
@@ -104,8 +106,10 @@
                         </span>
                           <span class="menu-item__price-hint"></span>
                       </span>
-                      <button class="btn-action btn-action--add" (click)="activeCustomization !== null && activeCustomization.pizza.id === item.id ? handleAddButtonClick() : quickAddToCart(item)">
-                        +
+                      <button class="btn-action btn-action--add" 
+                        [class.btn-action--added]="lastAddedItemId() === 'normal-' + itemIdToString(item.id)"
+                        (click)="activeCustomization !== null && activeCustomization.pizza.id === item.id ? handleAddButtonClick() : quickAddToCart(item)">
+                        {{ lastAddedItemId() === 'normal-' + itemIdToString(item.id) ? '✓' : '+' }}
                       </button>
                      
                     </div>

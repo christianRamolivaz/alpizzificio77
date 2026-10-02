@@ -37,6 +37,7 @@ export class Menu {
 
   selectedCategories = signal(new Set<string>());
   collapsedCategories = signal(new Set<string>());
+  lastAddedItemId = signal<string | null>(null);
   activeCustomization: CustomizationState | null = null;
   searchQuery = signal('');
 
@@ -143,6 +144,10 @@ export class Menu {
     this.collapsedCategories.set(new Set());
   }
 
+  itemIdToString(id: string | number | undefined): string {
+    return String(id ?? '');
+  }
+
   toggleCategoryCollapse(cat: string) {
     this.collapsedCategories.update(prev => {
       const next = new Set(prev);
@@ -242,10 +247,14 @@ export class Menu {
 
   quickAddToCart(pizza: Pizza) {
     this.cartService.addOrIncrementPlain(pizza);
+    this.lastAddedItemId.set('normal-' + pizza.id);
+    setTimeout(() => this.lastAddedItemId.set(null), 400);
   }
 
   quickAddBabyToCart(pizza: Pizza) {
     this.cartService.addOrIncrementBaby(pizza);
+    this.lastAddedItemId.set('baby-' + pizza.id);
+    setTimeout(() => this.lastAddedItemId.set(null), 400);
   }
 
   confirmAddToCart() {

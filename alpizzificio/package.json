@@ -6,6 +6,7 @@
     "start": "ng serve",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
+    "seed:days": "node scripts/seed-opening-days.js",
     "test": "ng test"
   },
   "private": true,
@@ -15,11 +16,13 @@
     "@angular/common": "^21.2.0",
     "@angular/compiler": "^21.2.0",
     "@angular/core": "^21.2.0",
+    "@angular/fire": "^20.1.0",
     "@angular/forms": "^21.2.0",
     "@angular/platform-browser": "^21.2.0",
     "@angular/router": "^21.2.0",
     "@angular/service-worker": "^21.2.0",
     "@emailjs/browser": "^4.4.1",
+    "firebase": "^12.19.0",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0"
   },

@@ -1,0 +1,349 @@
+<div class="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 bg-black/50 backdrop-blur-sm animate-fade-in">
+  <div class="bg-white rounded-2xl shadow-2xl w-full max-w-xl max-h-[92vh] sm:max-h-[90vh] flex flex-col overflow-hidden border border-gray-100">
+    
+    <!-- Modal Header -->
+    <div class="px-4 py-3 sm:px-6 sm:py-4 bg-gradient-to-r from-orange-600 to-red-600 text-white flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-white/20 flex items-center justify-center text-lg sm:text-xl shrink-0">
+          @if (type === 'pizza') {
+            <span>🍕</span>
+          } @else {
+            <span>🧀</span>
+          }
+        </div>
+        <div>
+          <h2 class="text-lg sm:text-xl font-bold leading-tight">
+            @if (mode === 'edit') {
+              Modifica {{ type === 'pizza' ? 'Pizza' : 'Ingrediente' }}
+            } @else {
+              Aggiungi {{ type === 'pizza' ? 'Nuova Pizza' : 'Nuovo Ingrediente' }}
+            }
+          </h2>
+          <p class="text-xs text-orange-100">
+            @if (mode === 'edit') {
+              Modifica i dettagli e aggiorna direttamente su Firestore
+            } @else {
+              Inserisci i dati per creare un nuovo record (ID: massimo + 1)
+            }
+          </p>
+        </div>
+      </div>
+      <button
+        type="button"
+        (click)="onCancel()"
+        class="text-white/80 hover:text-white p-1 rounded-lg hover:bg-white/10 transition-colors"
+        title="Chiudi"
+      >
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+        </svg>
+      </button>
+    </div>
+
+    <!-- Modal Body (Scrollable) -->
+    <div class="p-4 sm:p-6 overflow-y-auto flex-1 space-y-4 sm:space-y-5">
+      @if (errorMessage()) {
+        <div class="p-4 bg-red-50 border border-red-200 text-red-700 rounded-xl text-sm flex items-center gap-2">
+          <svg class="w-5 h-5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
+          </svg>
+          <span>{{ errorMessage() }}</span>
+        </div>
+      }
+
+      <!-- FORM PIZZA -->
+      @if (type === 'pizza') {
+        <form [formGroup]="pizzaForm" (ngSubmit)="onSave()" class="space-y-4">
+          <!-- Campo ID (Bloccato / Readonly) -->
+          <div>
+            <div class="flex items-center justify-between mb-1">
+              <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                ID Record (Non Modificabile)
+              </label>
+              <span class="text-xs px-2 py-0.5 rounded-full bg-gray-100 text-gray-600 font-medium">
+                @if (mode === 'edit') {
+                  🔒 ID Fisso
+                } @else {
+                  ✨ Massimo + 1
+                }
+              </span>
+            </div>
+            <div class="relative">
+              <input
+                type="text"
+                formControlName="id"
+                class="w-full px-4 py-2.5 bg-gray-100 text-gray-700 font-mono font-semibold border border-gray-200 rounded-xl cursor-not-allowed select-none"
+                readonly
+              />
+              <span class="absolute right-3 top-2.5 text-gray-400 text-sm">🔒</span>
+            </div>
+            <p class="text-[11px] text-gray-400 mt-1">
+              L'ID è univoco e gestito automaticamente (per nuove voci: max + 1 = {{ effectiveId }}).
+            </p>
+          </div>
+
+          <!-- Nome Pizza -->
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">
+              Nome Pizza <span class="text-red-500">*</span>
+            </label>
+            <input
+              type="text"
+              formControlName="name"
+              placeholder="es. Margherita, Diavola..."
+              class="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-gray-900"
+            />
+            @if (pizzaForm.get('name')?.touched && pizzaForm.get('name')?.invalid) {
+              <p class="text-xs text-red-500 mt-1">Il nome è obbligatorio (almeno 2 caratteri).</p>
+            }
+          </div>
+
+          <!-- Categoria e Prezzo (Grid a 2 colonne) -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">
+                Categoria <span class="text-red-500">*</span>
+              </label>
+              <input
+                type="text"
+                list="pizzaCategoryList"
+                formControlName="category"
+                placeholder="es. Pizze Rosse, Pizze Bianche..."
+                class="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-gray-900"
+              />
+              <datalist id="pizzaCategoryList">
+                <option value="Pizze Rosse"></option>
+                <option value="Pizze Bianche"></option>
+                <option value="Pizze Speciali"></option>
+                <option value="Antipasti e Fritti"></option>
+                <option value="Dolci"></option>
+                <option value="Bevande"></option>
+                @for (cat of availableCategories; track cat) {
+                  <option [value]="cat"></option>
+                }
+              </datalist>
+              @if (pizzaForm.get('category')?.touched && pizzaForm.get('category')?.invalid) {
+                <p class="text-xs text-red-500 mt-1">La categoria è obbligatoria.</p>
+              }
+            </div>
+
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">
+                Prezzo (€) <span class="text-red-500">*</span>
+              </label>
+              <div class="relative">
+                <span class="absolute left-3 top-2.5 text-gray-500 font-medium">€</span>
+                <input
+                  type="number"
+                  step="0.10"
+                  min="0"
+                  formControlName="price"
+                  placeholder="8.50"
+                  class="w-full pl-8 pr-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-gray-900"
+                />
+              </div>
+              @if (pizzaForm.get('price')?.touched && pizzaForm.get('price')?.invalid) {
+                <p class="text-xs text-red-500 mt-1">Inserisci un prezzo valido (min 0).</p>
+              }
+            </div>
+          </div>
+
+          <!-- Descrizione -->
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">
+              Descrizione
+            </label>
+            <textarea
+              formControlName="description"
+              rows="2"
+              placeholder="Breve descrizione o elenco degli ingredienti per il menu..."
+              class="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-gray-900 resize-none"
+            ></textarea>
+          </div>
+
+          <!-- Ingredienti Base (separati da virgola) -->
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">
+              Ingredienti Base (separati da virgola)
+            </label>
+            <input
+              type="text"
+              formControlName="baseIngredients"
+              placeholder="pomodoro, mozzarella fior di latte, basilico"
+              class="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-gray-900 text-sm"
+            />
+            <p class="text-xs text-gray-400 mt-1">
+              Separa ciascun ingrediente con una virgola. Verranno usati per personalizzazioni e rimozioni.
+            </p>
+          </div>
+
+          <!-- Opzioni Formato Baby -->
+          <div class="p-4 bg-orange-50/60 rounded-xl border border-orange-100 space-y-3">
+            <label class="flex items-center gap-2 cursor-pointer select-none">
+              <input
+                type="checkbox"
+                formControlName="isBaby"
+                class="w-4 h-4 text-orange-600 rounded border-gray-300 focus:ring-orange-500"
+              />
+              <span class="text-sm font-medium text-gray-800">Disponibile formato Baby</span>
+            </label>
+
+            <div>
+              <label class="block text-xs font-medium text-gray-600 mb-1">
+                Prezzo Baby (€, facoltativo)
+              </label>
+              <div class="relative w-40">
+                <span class="absolute left-3 top-2 text-gray-500 font-medium text-xs">€</span>
+                <input
+                  type="number"
+                  step="0.10"
+                  min="0"
+                  formControlName="importoBaby"
+                  placeholder="5.50"
+                  class="w-full pl-7 pr-3 py-1.5 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-orange-500 text-gray-900"
+                />
+              </div>
+            </div>
+          </div>
+        </form>
+      }
+
+      <!-- FORM INGREDIENTE -->
+      @if (type === 'ingredient') {
+        <form [formGroup]="ingredientForm" (ngSubmit)="onSave()" class="space-y-4">
+          <!-- Campo ID (Bloccato / Readonly) -->
+          <div>
+            <div class="flex items-center justify-between mb-1">
+              <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                ID Ingrediente (Non Modificabile)
+              </label>
+              <span class="text-xs px-2 py-0.5 rounded-full bg-gray-100 text-gray-600 font-medium">
+                @if (mode === 'edit') {
+                  🔒 ID Fisso
+                } @else {
+                  ✨ Massimo + 1
+                }
+              </span>
+            </div>
+            <div class="relative">
+              <input
+                type="text"
+                formControlName="id"
+                class="w-full px-4 py-2.5 bg-gray-100 text-gray-700 font-mono font-semibold border border-gray-200 rounded-xl cursor-not-allowed select-none"
+                readonly
+              />
+              <span class="absolute right-3 top-2.5 text-gray-400 text-sm">🔒</span>
+            </div>
+            <p class="text-[11px] text-gray-400 mt-1">
+              L'ID è univoco e gestito automaticamente (per nuove voci: max + 1 = {{ effectiveId }}).
+            </p>
+          </div>
+
+          <!-- Nome Ingrediente -->
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">
+              Nome Ingrediente <span class="text-red-500">*</span>
+            </label>
+            <input
+              type="text"
+              formControlName="nome"
+              placeholder="es. Mozzarella di bufala, Nduja..."
+              class="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-gray-900"
+            />
+            @if (ingredientForm.get('nome')?.touched && ingredientForm.get('nome')?.invalid) {
+              <p class="text-xs text-red-500 mt-1">Il nome è obbligatorio (almeno 2 caratteri).</p>
+            }
+          </div>
+
+          <!-- Categoria e Prezzo Ingrediente -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">
+                Categoria <span class="text-red-500">*</span>
+              </label>
+              <input
+                type="text"
+                list="ingCategoryList"
+                formControlName="categoria"
+                placeholder="es. Base, Formaggi, Salumi..."
+                class="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-gray-900"
+              />
+              <datalist id="ingCategoryList">
+                <option value="Base"></option>
+                <option value="Formaggi"></option>
+                <option value="Salumi"></option>
+                <option value="Carne"></option>
+                <option value="Verdure"></option>
+                <option value="Condimenti"></option>
+                <option value="Aromi"></option>
+                @for (cat of availableCategories; track cat) {
+                  <option [value]="cat"></option>
+                }
+              </datalist>
+              @if (ingredientForm.get('categoria')?.touched && ingredientForm.get('categoria')?.invalid) {
+                <p class="text-xs text-red-500 mt-1">La categoria è obbligatoria.</p>
+              }
+            </div>
+
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">
+                Prezzo Aggiunta (€) <span class="text-red-500">*</span>
+              </label>
+              <div class="relative">
+                <span class="absolute left-3 top-2.5 text-gray-500 font-medium">€</span>
+                <input
+                  type="number"
+                  step="0.10"
+                  min="0"
+                  formControlName="prezzo"
+                  placeholder="1.50"
+                  class="w-full pl-8 pr-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-gray-900"
+                />
+              </div>
+              <p class="text-[11px] text-gray-400 mt-1">Usa 0 per ingredienti inclusi di base.</p>
+            </div>
+          </div>
+        </form>
+      }
+    </div>
+
+    <!-- Modal Footer Actions -->
+    <div class="px-4 py-3 sm:px-6 sm:py-4 bg-gray-50 border-t border-gray-200 flex items-center justify-end gap-2 sm:gap-3">
+      <button
+        type="button"
+        (click)="onCancel()"
+        [disabled]="isSubmitting()"
+        class="flex-1 sm:flex-none justify-center px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-xl hover:bg-gray-50 active:bg-gray-100 transition-colors disabled:opacity-50"
+      >
+        Annulla
+      </button>
+
+      <button
+        type="button"
+        (click)="onSave()"
+        [disabled]="isSubmitting()"
+        class="flex-1 sm:flex-none justify-center px-5 py-2 text-sm font-semibold text-white bg-gradient-to-r from-orange-600 to-red-600 hover:from-orange-700 hover:to-red-700 rounded-xl shadow-md shadow-orange-500/20 active:scale-[0.98] transition-all flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+      >
+        @if (isSubmitting()) {
+          <svg class="animate-spin h-4 w-4 text-white" fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
+          </svg>
+          <span>Salvataggio...</span>
+        } @else {
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+          </svg>
+          <span>
+            @if (mode === 'edit') {
+              Aggiorna su Firestore
+            } @else {
+              Salva Record su Firestore
+            }
+          </span>
+        }
+      </button>
+    </div>
+
+  </div>
+</div>

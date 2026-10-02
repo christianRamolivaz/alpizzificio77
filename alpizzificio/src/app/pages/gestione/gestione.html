@@ -1,0 +1,823 @@
+<div class="min-h-screen bg-gradient-to-b from-orange-50/40 via-gray-50 to-gray-100 py-4 sm:py-8 px-3 sm:px-6 lg:px-8">
+  <div class="max-w-7xl mx-auto space-y-4 sm:space-y-6">
+
+    <!-- Header Panel -->
+    <div class="bg-white rounded-2xl shadow-sm border border-gray-200/80 p-4 sm:p-6 lg:p-8 flex flex-col md:flex-row md:items-center md:justify-between gap-4 sm:gap-6">
+      <div class="space-y-1.5">
+        <div class="flex flex-wrap items-center gap-2">
+          <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-red-100 text-red-800">
+            <span class="w-1.5 h-1.5 rounded-full bg-red-600 animate-pulse"></span>
+            Area Riservata Admin
+          </span>
+          @if ((currentUser | async)?.email) {
+            <span class="text-xs text-gray-500 font-medium truncate max-w-[250px] sm:max-w-none">
+              Connesso come: <strong class="text-gray-700">{{ (currentUser | async)?.email }}</strong>
+            </span>
+          }
+        </div>
+        <h1 class="text-2xl sm:text-3xl font-extrabold text-gray-900 tracking-tight">
+          Gestione Menu & Ingredienti
+        </h1>
+        <p class="text-xs sm:text-sm text-gray-600">
+          Modifica, aggiungi ed elimina record direttamente da Firestore. Le modifiche sono istantanee.
+        </p>
+      </div>
+
+      <!-- Quick Action: Aggiungi Nuovo -->
+      <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5 sm:gap-3">
+        <a
+          routerLink="/menu"
+          class="inline-flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-xl text-sm font-semibold text-gray-700 bg-gray-100 hover:bg-gray-200 transition-colors"
+        >
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
+          </svg>
+          <span>Visualizza Menu</span>
+        </a>
+
+        @if (activeTab() === 'pizze' || activeTab() === 'ingredienti') {
+          <button
+            type="button"
+            (click)="openAddNew()"
+            class="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl text-sm font-bold text-white bg-gradient-to-r from-orange-600 to-red-600 hover:from-orange-700 hover:to-red-700 shadow-md shadow-orange-500/20 active:scale-[0.98] transition-all cursor-pointer"
+          >
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+            </svg>
+            <span>
+              @if (activeTab() === 'pizze') {
+                Aggiungi Nuova Pizza
+              } @else {
+                Aggiungi Nuovo Ingrediente
+              }
+            </span>
+          </button>
+        }
+      </div>
+    </div>
+
+    <!-- Alert Feedback -->
+    @if (feedback()) {
+      <div
+        class="p-4 rounded-xl text-sm font-medium flex items-center justify-between border shadow-sm transition-all"
+        [ngClass]="{
+          'bg-emerald-50 text-emerald-800 border-emerald-200': feedback()?.type === 'success',
+          'bg-red-50 text-red-800 border-red-200': feedback()?.type === 'error'
+        }"
+      >
+        <div class="flex items-center gap-2">
+          @if (feedback()?.type === 'success') {
+            <svg class="w-5 h-5 text-emerald-600 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+            </svg>
+          } @else {
+            <svg class="w-5 h-5 text-red-600 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
+            </svg>
+          }
+          <span>{{ feedback()?.message }}</span>
+        </div>
+        <button
+          type="button"
+          (click)="feedback.set(null)"
+          class="text-gray-400 hover:text-gray-600 p-1"
+        >
+          &times;
+        </button>
+      </div>
+    }
+
+    <!-- Tabs and Filter Toolbar -->
+    <div class="bg-white rounded-2xl shadow-sm border border-gray-200/80 p-3 sm:p-4 flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3 sm:gap-4">
+      
+      <!-- Tabs Switcher -->
+      <div class="flex items-center gap-1 p-1 bg-gray-100 rounded-xl overflow-x-auto whitespace-nowrap">
+        <button
+          type="button"
+          (click)="activeTab.set('pizze')"
+          class="flex-1 sm:flex-none inline-flex items-center justify-center gap-1.5 sm:gap-2 px-3 sm:px-5 py-2 rounded-lg text-xs sm:text-sm font-semibold transition-all cursor-pointer"
+          [ngClass]="{
+            'bg-white text-gray-900 shadow-sm': activeTab() === 'pizze',
+            'text-gray-600 hover:text-gray-900': activeTab() !== 'pizze'
+          }"
+        >
+          <span>🍕 Pizze</span>
+          <span
+            class="px-1.5 py-0.5 rounded-full text-[11px] sm:text-xs font-bold"
+            [ngClass]="activeTab() === 'pizze' ? 'bg-orange-100 text-orange-800' : 'bg-gray-200 text-gray-700'"
+          >
+            {{ filteredPizzas().length }}
+          </span>
+        </button>
+
+        <button
+          type="button"
+          (click)="activeTab.set('ingredienti')"
+          class="flex-1 sm:flex-none inline-flex items-center justify-center gap-1.5 sm:gap-2 px-3 sm:px-5 py-2 rounded-lg text-xs sm:text-sm font-semibold transition-all cursor-pointer"
+          [ngClass]="{
+            'bg-white text-gray-900 shadow-sm': activeTab() === 'ingredienti',
+            'text-gray-600 hover:text-gray-900': activeTab() !== 'ingredienti'
+          }"
+        >
+          <span>🧀 Ingredienti</span>
+          <span
+            class="px-1.5 py-0.5 rounded-full text-[11px] sm:text-xs font-bold"
+            [ngClass]="activeTab() === 'ingredienti' ? 'bg-orange-100 text-orange-800' : 'bg-gray-200 text-gray-700'"
+          >
+            {{ ingredients().length }}
+          </span>
+        </button>
+
+        <button
+          type="button"
+          (click)="activeTab.set('giorni')"
+          class="flex-1 sm:flex-none inline-flex items-center justify-center gap-1.5 sm:gap-2 px-3 sm:px-5 py-2 rounded-lg text-xs sm:text-sm font-semibold transition-all cursor-pointer"
+          [ngClass]="{
+            'bg-white text-gray-900 shadow-sm': activeTab() === 'giorni',
+            'text-gray-600 hover:text-gray-900': activeTab() !== 'giorni'
+          }"
+        >
+          <span>📅 Giorni</span>
+          <span
+            class="px-1.5 py-0.5 rounded-full text-[11px] sm:text-xs font-bold"
+            [ngClass]="activeTab() === 'giorni' ? 'bg-orange-100 text-orange-800' : 'bg-gray-200 text-gray-700'"
+          >
+            {{ openingDays().length }}
+          </span>
+        </button>
+
+      </div>
+
+      <!-- Search & Next ID info -->
+      <div class="flex items-center gap-2 sm:gap-3 flex-1 md:max-w-md md:justify-end">
+        @if (activeTab() !== 'giorni') {
+          <div class="relative w-full">
+            <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+              </svg>
+            </span>
+            <input
+              type="text"
+              [ngModel]="searchQuery()"
+              (ngModelChange)="searchQuery.set($event)"
+              placeholder="Cerca nome, categoria, ID..."
+              class="w-full pl-9 pr-8 py-2 text-sm border border-gray-300 rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+            />
+            @if (searchQuery()) {
+              <button
+                type="button"
+                (click)="searchQuery.set('')"
+                class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600 text-xs"
+              >
+                &times;
+              </button>
+            }
+          </div>
+
+          <div class="flex items-center gap-1.5 px-2.5 py-2 bg-orange-50 border border-orange-100 rounded-xl text-xs text-orange-800 font-medium whitespace-nowrap shrink-0">
+            <span class="hidden sm:inline">Prossimo ID:</span>
+            <span class="sm:hidden">ID:</span>
+            <strong class="font-mono bg-white px-1.5 py-0.5 rounded border border-orange-200">
+              {{ activeTab() === 'pizze' ? nextPizzaId() : nextIngredientId() }}
+            </strong>
+          </div>
+          
+        } @else {
+          <div class="text-xs text-gray-500 flex items-center gap-1.5">
+            <span class="inline-block w-2 h-2 rounded-full bg-emerald-500 shrink-0"></span>
+            <span>
+              I 7 giorni della settimana sono predefiniti. Attiva/disattiva di seguito.
+            </span>
+          </div>
+        }
+      </div>
+    </div>
+
+    <!-- Loading State -->
+    @if (isLoading()) {
+      <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-12 text-center">
+        <div class="inline-block animate-spin rounded-full h-10 w-10 border-4 border-orange-500 border-t-transparent mb-4"></div>
+        <p class="text-sm font-medium text-gray-600">Caricamento dati da Firestore...</p>
+      </div>
+    }
+
+    <!-- TABELLA PIZZE -->
+    @if (!isLoading() && activeTab() === 'pizze') {
+      <!-- Vista Desktop (Tabella) -->
+      <div class="hidden md:block bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
+        <div class="overflow-x-auto">
+          <table class="w-full text-left border-collapse">
+            <thead>
+              <tr class="bg-gray-50/80 border-b border-gray-200 text-xs uppercase tracking-wider text-gray-500 font-semibold">
+                <th class="py-3.5 px-4 w-16">ID</th>
+                <th class="py-3.5 px-4">Nome & Descrizione</th>
+                <th class="py-3.5 px-4">Categoria</th>
+                <th class="py-3.5 px-4">Prezzo</th>
+                <th class="py-3.5 px-4">Baby</th>
+                <th class="py-3.5 px-4">Ingredienti Base</th>
+                <th class="py-3.5 px-4 text-right w-44">Azioni</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-100 text-sm">
+              @for (pizza of filteredPizzas(); track pizza.id) {
+                <tr class="hover:bg-orange-50/30 transition-colors">
+                  <!-- ID -->
+                  <td class="py-3.5 px-4 font-mono font-bold text-gray-700">
+                    <span class="px-2 py-0.5 bg-gray-100 border border-gray-200 rounded text-xs">
+                      #{{ pizza.id }}
+                    </span>
+                  </td>
+
+                  <!-- Nome e Descrizione -->
+                  <td class="py-3.5 px-4">
+                    <div class="font-bold text-gray-900">{{ pizza.name }}</div>
+                    @if (pizza.description) {
+                      <div class="text-xs text-gray-500 line-clamp-1 mt-0.5">{{ pizza.description }}</div>
+                    }
+                  </td>
+
+                  <!-- Categoria -->
+                  <td class="py-3.5 px-4 whitespace-nowrap">
+                    <span class="inline-flex px-2.5 py-0.5 rounded-full text-xs font-medium bg-amber-50 text-amber-800 border border-amber-200">
+                      {{ pizza.category }}
+                    </span>
+                  </td>
+
+                  <!-- Prezzo -->
+                  <td class="py-3.5 px-4 font-semibold text-gray-900 whitespace-nowrap">
+                    € {{ pizza.price | number:'1.2-2' }}
+                  </td>
+
+                  <!-- Baby -->
+                  <td class="py-3.5 px-4 whitespace-nowrap text-xs">
+                    @if (pizza.isBaby || pizza.importoBaby) {
+                      <span class="inline-flex items-center gap-1 text-emerald-700 font-medium">
+                        ✓ € {{ (pizza.importoBaby ?? 0) | number:'1.2-2' }}
+                      </span>
+                    } @else {
+                      <span class="text-gray-400">—</span>
+                    }
+                  </td>
+
+                  <!-- Ingredienti Base -->
+                  <td class="py-3.5 px-4">
+                    @if (pizza.baseIngredients && pizza.baseIngredients.length > 0) {
+                      <div class="flex flex-wrap gap-1 max-w-xs">
+                        @for (ing of pizza.baseIngredients; track ing) {
+                          <span class="text-[11px] bg-gray-100 text-gray-700 px-1.5 py-0.5 rounded border border-gray-200">
+                            {{ ing }}
+                          </span>
+                        }
+                      </div>
+                    } @else {
+                      <span class="text-xs text-gray-400 italic">Nessun ingrediente base</span>
+                    }
+                  </td>
+
+                  <!-- Azioni -->
+                  <td class="py-3.5 px-4 text-right whitespace-nowrap">
+                    <div class="inline-flex items-center gap-2">
+                      <!-- Modifica -->
+                      <button
+                        type="button"
+                        (click)="openEditPizza(pizza)"
+                        class="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-semibold text-orange-700 bg-orange-50 hover:bg-orange-100 border border-orange-200 transition-colors cursor-pointer"
+                        title="Modifica campi di questa pizza"
+                      >
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/>
+                        </svg>
+                        <span>Modifica</span>
+                      </button>
+
+                      <!-- Elimina -->
+                      <button
+                        type="button"
+                        (click)="promptDeletePizza(pizza)"
+                        class="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-xs font-semibold text-red-600 bg-red-50 hover:bg-red-100 border border-red-200 transition-colors cursor-pointer"
+                        title="Elimina pizza da Firestore"
+                      >
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                        </svg>
+                        <span>Elimina</span>
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              } @empty {
+                <tr>
+                  <td colspan="7" class="py-12 text-center text-gray-500">
+                    <p class="font-medium text-base mb-1">Nessuna pizza trovata</p>
+                    <p class="text-xs text-gray-400">Prova a modificare i termini di ricerca oppure aggiungi una nuova pizza.</p>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Vista Mobile (Card) -->
+      <div class="block md:hidden space-y-3">
+        @for (pizza of filteredPizzas(); track pizza.id) {
+          <div class="bg-white rounded-2xl p-4 border border-gray-200/90 shadow-sm space-y-3">
+            <div class="flex items-start justify-between gap-2">
+              <div class="space-y-1">
+                <div class="flex items-center gap-2 flex-wrap">
+                  <span class="px-2 py-0.5 bg-gray-100 font-mono font-bold border border-gray-200 rounded text-xs text-gray-700">
+                    #{{ pizza.id }}
+                  </span>
+                  <span class="inline-flex px-2 py-0.5 rounded-full text-xs font-medium bg-amber-50 text-amber-800 border border-amber-200">
+                    {{ pizza.category }}
+                  </span>
+                  @if (pizza.isBaby || pizza.importoBaby) {
+                    <span class="inline-flex items-center gap-1 text-[11px] px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 font-medium">
+                      Baby €{{ (pizza.importoBaby ?? 0) | number:'1.2-2' }}
+                    </span>
+                  }
+                </div>
+                <h3 class="text-base font-bold text-gray-900 leading-tight">
+                  {{ pizza.name }}
+                </h3>
+              </div>
+              <div class="text-right shrink-0">
+                <span class="text-base font-extrabold text-orange-600">
+                  € {{ pizza.price | number:'1.2-2' }}
+                </span>
+              </div>
+            </div>
+
+            @if (pizza.description) {
+              <p class="text-xs text-gray-600 leading-relaxed bg-gray-50/60 p-2 rounded-lg border border-gray-100">
+                {{ pizza.description }}
+              </p>
+            }
+
+            @if (pizza.baseIngredients && pizza.baseIngredients.length > 0) {
+              <div class="space-y-1">
+                <span class="text-[11px] font-semibold text-gray-400 uppercase tracking-wider">Base:</span>
+                <div class="flex flex-wrap gap-1">
+                  @for (ing of pizza.baseIngredients; track ing) {
+                    <span class="text-[11px] bg-gray-100 text-gray-700 px-2 py-0.5 rounded-md border border-gray-200">
+                      {{ ing }}
+                    </span>
+                  }
+                </div>
+              </div>
+            }
+
+            <div class="pt-2 border-t border-gray-100 flex items-center gap-2">
+              <button
+                type="button"
+                (click)="openEditPizza(pizza)"
+                class="flex-1 inline-flex items-center justify-center gap-1.5 py-2 px-3 rounded-xl text-xs font-semibold text-orange-700 bg-orange-50 hover:bg-orange-100 border border-orange-200 active:scale-[0.98] transition-all cursor-pointer"
+              >
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/>
+                </svg>
+                <span>Modifica</span>
+              </button>
+
+              <button
+                type="button"
+                (click)="promptDeletePizza(pizza)"
+                class="flex-1 inline-flex items-center justify-center gap-1.5 py-2 px-3 rounded-xl text-xs font-semibold text-red-600 bg-red-50 hover:bg-red-100 border border-red-200 active:scale-[0.98] transition-all cursor-pointer"
+              >
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                </svg>
+                <span>Elimina</span>
+              </button>
+            </div>
+          </div>
+        } @empty {
+          <div class="bg-white rounded-2xl p-8 text-center text-gray-500 border border-gray-200">
+            <p class="font-medium text-base mb-1">Nessuna pizza trovata</p>
+            <p class="text-xs text-gray-400">Prova a modificare i termini di ricerca oppure aggiungi una nuova pizza.</p>
+          </div>
+        }
+      </div>
+    }
+
+    <!-- TABELLA INGREDIENTI -->
+    @if (!isLoading() && activeTab() === 'ingredienti') {
+      
+      <!-- Vista Desktop (Tabella) -->
+      <div class="hidden md:block bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
+        <div class="overflow-x-auto">
+          <table class="w-full text-left border-collapse">
+            <thead>
+              <tr class="bg-gray-50/80 border-b border-gray-200 text-xs uppercase tracking-wider text-gray-500 font-semibold">
+                <th class="py-3.5 px-4 w-16">ID</th>
+                <th class="py-3.5 px-4">Nome Ingrediente</th>
+                <th class="py-3.5 px-4">Categoria</th>
+                <th class="py-3.5 px-4">Prezzo Aggiunta</th>
+                <th class="py-3.5 px-4 text-right w-44">Azioni</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-100 text-sm">
+              @for (ing of filteredIngredients(); track ing.id) {
+                <tr class="hover:bg-orange-50/30 transition-colors">
+                  <!-- ID -->
+                  <td class="py-3.5 px-4 font-mono font-bold text-gray-700">
+                    <span class="px-2 py-0.5 bg-gray-100 border border-gray-200 rounded text-xs">
+                      #{{ ing.id }}
+                    </span>
+                  </td>
+
+                  <!-- Nome -->
+                  <td class="py-3.5 px-4 font-bold text-gray-900">
+                    {{ ing.nome }}
+                  </td>
+
+                  <!-- Categoria -->
+                  <td class="py-3.5 px-4 whitespace-nowrap">
+                    <span class="inline-flex px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-50 text-blue-800 border border-blue-200">
+                      {{ ing.categoria }}
+                    </span>
+                  </td>
+
+                  <!-- Prezzo -->
+                  <td class="py-3.5 px-4 font-semibold text-gray-900 whitespace-nowrap">
+                    @if (ing.prezzo === 0) {
+                      <span class="text-gray-500 font-normal text-xs bg-gray-100 px-2 py-0.5 rounded">Incluso (€ 0.00)</span>
+                    } @else {
+                      <span>+ € {{ ing.prezzo | number:'1.2-2' }}</span>
+                    }
+                  </td>
+
+                  <!-- Azioni -->
+                  <td class="py-3.5 px-4 text-right whitespace-nowrap">
+                    <div class="inline-flex items-center gap-2">
+                      <!-- Modifica -->
+                      <button
+                        type="button"
+                        (click)="openEditIngredient(ing)"
+                        class="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-semibold text-orange-700 bg-orange-50 hover:bg-orange-100 border border-orange-200 transition-colors cursor-pointer"
+                        title="Modifica campi di questo ingrediente"
+                      >
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/>
+                        </svg>
+                        <span>Modifica</span>
+                      </button>
+
+                      <!-- Elimina -->
+                      <button
+                        type="button"
+                        (click)="promptDeleteIngredient(ing)"
+                        class="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-xs font-semibold text-red-600 bg-red-50 hover:bg-red-100 border border-red-200 transition-colors cursor-pointer"
+                        title="Elimina ingrediente da Firestore"
+                      >
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                        </svg>
+                        <span>Elimina</span>
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              } @empty {
+                <tr>
+                  <td colspan="5" class="py-12 text-center text-gray-500">
+                    <p class="font-medium text-base mb-1">Nessun ingrediente trovato</p>
+                    <p class="text-xs text-gray-400">Prova a modificare i termini di ricerca oppure aggiungi un nuovo ingrediente.</p>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Vista Mobile (Card) -->
+      <div class="block md:hidden space-y-3">
+        @for (ing of filteredIngredients(); track ing.id) {
+          <div class="bg-white rounded-2xl p-4 border border-gray-200/90 shadow-sm space-y-3">
+            <div class="flex items-center justify-between gap-2">
+              <div class="flex items-center gap-2">
+                <span class="px-2 py-0.5 bg-gray-100 font-mono font-bold border border-gray-200 rounded text-xs text-gray-700">
+                  #{{ ing.id }}
+                </span>
+                <span class="inline-flex px-2 py-0.5 rounded-full text-xs font-medium bg-blue-50 text-blue-800 border border-blue-200">
+                  {{ ing.categoria }}
+                </span>
+              </div>
+              <div>
+                @if (ing.prezzo === 0) {
+                  <span class="text-xs font-medium text-gray-500 bg-gray-100 px-2 py-0.5 rounded">Incluso</span>
+                } @else {
+                  <span class="text-sm font-extrabold text-gray-900">+ € {{ ing.prezzo | number:'1.2-2' }}</span>
+                }
+              </div>
+            </div>
+
+            <div class="text-base font-bold text-gray-900">
+              {{ ing.nome }}
+            </div>
+
+            <div class="pt-2 border-t border-gray-100 flex items-center gap-2">
+              <button
+                type="button"
+                (click)="openEditIngredient(ing)"
+                class="flex-1 inline-flex items-center justify-center gap-1.5 py-2 px-3 rounded-xl text-xs font-semibold text-orange-700 bg-orange-50 hover:bg-orange-100 border border-orange-200 active:scale-[0.98] transition-all cursor-pointer"
+              >
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/>
+                </svg>
+                <span>Modifica</span>
+              </button>
+
+              <button
+                type="button"
+                (click)="promptDeleteIngredient(ing)"
+                class="flex-1 inline-flex items-center justify-center gap-1.5 py-2 px-3 rounded-xl text-xs font-semibold text-red-600 bg-red-50 hover:bg-red-100 border border-red-200 active:scale-[0.98] transition-all cursor-pointer"
+              >
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                </svg>
+                <span>Elimina</span>
+              </button>
+            </div>
+          </div>
+        } @empty {
+          <div class="bg-white rounded-2xl p-8 text-center text-gray-500 border border-gray-200">
+            <p class="font-medium text-base mb-1">Nessun ingrediente trovato</p>
+            <p class="text-xs text-gray-400">Prova a modificare i termini di ricerca oppure aggiungi un nuovo ingrediente.</p>
+          </div>
+        }
+      </div>
+    }
+
+    <!-- TABELLA / GESTIONE GIORNI DI APERTURA -->
+    @if (!isLoading() && activeTab() === 'giorni') {
+      <div class="space-y-4">
+        <!-- Info banner -->
+        <div class="bg-blue-50 border border-blue-200 rounded-2xl p-3.5 sm:p-4 text-sm text-blue-900 flex items-start gap-3">
+          <div class="text-xl shrink-0">ℹ️</div>
+          <div>
+            <p class="font-semibold mb-0.5 text-xs sm:text-sm">Regole di apertura e orari</p>
+            <p class="text-xs text-blue-800 leading-relaxed">
+              I 7 giorni della settimana sono predefiniti. Modifica lo stato di apertura (<strong>Aperto / Chiuso</strong>) o il tipo di orario (<strong>Weekend: 18:00 - 22:30</strong> oppure <strong>Normale: 18:00 - 21:30</strong>). Modifiche salvate all'istante su Firestore.
+            </p>
+          </div>
+        </div>
+
+        <!-- Vista Desktop (Tabella) -->
+        <div class="hidden md:block bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
+          <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse">
+              <thead>
+                <tr class="bg-gray-50/80 border-b border-gray-200 text-xs uppercase tracking-wider text-gray-500 font-semibold">
+                  <th class="py-3.5 px-4 w-16">Giorno</th>
+                  <th class="py-3.5 px-4">Nome Giorno</th>
+                  <th class="py-3.5 px-4 text-center">Stato Apertura (isOpen)</th>
+                  <th class="py-3.5 px-4 text-center">Tipo Orario (isWeekend)</th>
+                  <th class="py-3.5 px-4 text-right">Fasce Orarie Risultanti</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-gray-100 text-sm">
+                @for (day of openingDays(); track day.dayOfWeek) {
+                  <tr class="hover:bg-orange-50/30 transition-colors">
+                    <!-- Numero Giorno -->
+                    <td class="py-4 px-4 font-mono font-bold text-gray-600">
+                      <span class="px-2 py-0.5 bg-gray-100 border border-gray-200 rounded text-xs">
+                        #{{ day.dayOfWeek }}
+                      </span>
+                    </td>
+
+                    <!-- Nome Giorno -->
+                    <td class="py-4 px-4">
+                      <div class="font-bold text-gray-900 text-base">{{ day.dayName }}</div>
+                      <div class="text-xs text-gray-500">
+                        {{ day.dayOfWeek === 0 ? 'Domenica (Inizio settimana)' : 'Giorno lavorativo / festivo' }}
+                      </div>
+                    </td>
+
+                    <!-- Switch isOpen -->
+                    <td class="py-4 px-4 text-center">
+                      <button
+                        type="button"
+                        (click)="toggleDayOpen(day)"
+                        [disabled]="savingDayOfWeek() === day.dayOfWeek"
+                        class="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all border cursor-pointer disabled:opacity-50"
+                        [ngClass]="{
+                          'bg-emerald-50 text-emerald-700 border-emerald-300 hover:bg-emerald-100 shadow-sm': day.isOpen,
+                          'bg-gray-100 text-gray-500 border-gray-300 hover:bg-gray-200': !day.isOpen
+                        }"
+                      >
+                        @if (savingDayOfWeek() === day.dayOfWeek) {
+                          <svg class="animate-spin h-3.5 w-3.5" fill="none" viewBox="0 0 24 24">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
+                          </svg>
+                        } @else {
+                          <span class="text-sm">{{ day.isOpen ? '🟢' : '🔴' }}</span>
+                        }
+                        <span>{{ day.isOpen ? 'APERTO' : 'CHIUSO' }}</span>
+                      </button>
+                    </td>
+
+                    <!-- Switch isWeekend -->
+                    <td class="py-4 px-4 text-center">
+                      <button
+                        type="button"
+                        (click)="toggleDayWeekend(day)"
+                        [disabled]="savingDayOfWeek() === day.dayOfWeek"
+                        class="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all border cursor-pointer disabled:opacity-50"
+                        [ngClass]="{
+                          'bg-purple-50 text-purple-700 border-purple-300 hover:bg-purple-100 shadow-sm': day.isWeekend,
+                          'bg-amber-50 text-amber-700 border-amber-300 hover:bg-amber-100': !day.isWeekend
+                        }"
+                      >
+                        @if (savingDayOfWeek() === day.dayOfWeek) {
+                          <svg class="animate-spin h-3.5 w-3.5" fill="none" viewBox="0 0 24 24">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
+                          </svg>
+                        } @else {
+                          <span>{{ day.isWeekend ? '🎉' : '⏱️' }}</span>
+                        }
+                        <span>{{ day.isWeekend ? 'WEEKEND (Fino 22:30)' : 'NORMALE (Fino 21:30)' }}</span>
+                      </button>
+                    </td>
+
+                    <!-- Orari effettivi -->
+                    <td class="py-4 px-4 text-right">
+                      @if (!day.isOpen) {
+                        <span class="inline-flex px-2.5 py-1 rounded-lg text-xs font-semibold bg-red-100 text-red-700">
+                          Chiuso al pubblico
+                        </span>
+                      } @else {
+                        <div class="space-y-0.5">
+                          <span class="inline-flex px-2.5 py-1 rounded-lg text-xs font-semibold bg-gray-100 text-gray-800 border border-gray-200">
+                            {{ day.isWeekend ? '18:00 – 22:30' : '18:00 – 21:30' }}
+                          </span>
+                          <div class="text-[11px] text-gray-400">
+                            {{ day.isWeekend ? '19 slot disponibili' : '15 slot disponibili' }}
+                          </div>
+                        </div>
+                      }
+                    </td>
+                  </tr>
+                } @empty {
+                  <tr>
+                    <td colspan="5" class="py-12 text-center text-gray-500">
+                      Nessun giorno di apertura configurato.
+                    </td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Vista Mobile (Card Giorni) -->
+        <div class="block md:hidden space-y-3">
+          @for (day of openingDays(); track day.dayOfWeek) {
+            <div class="bg-white rounded-2xl p-4 border border-gray-200/90 shadow-sm space-y-3">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                  <span class="px-2 py-0.5 bg-gray-100 font-mono font-bold border border-gray-200 rounded text-xs text-gray-700">
+                    #{{ day.dayOfWeek }}
+                  </span>
+                  <span class="text-base font-extrabold text-gray-900">
+                    {{ day.dayName }}
+                  </span>
+                </div>
+                <div>
+                  @if (!day.isOpen) {
+                    <span class="inline-flex px-2.5 py-0.5 rounded-full text-xs font-bold bg-red-100 text-red-700">
+                      Chiuso
+                    </span>
+                  } @else {
+                    <span class="inline-flex px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800">
+                      {{ day.isWeekend ? '18:00–22:30' : '18:00–21:30' }}
+                    </span>
+                  }
+                </div>
+              </div>
+
+              <div class="grid grid-cols-1 gap-2 pt-1">
+                <!-- Toggle Apertura -->
+                <button
+                  type="button"
+                  (click)="toggleDayOpen(day)"
+                  [disabled]="savingDayOfWeek() === day.dayOfWeek"
+                  class="w-full inline-flex items-center justify-center gap-2 px-3 py-2.5 rounded-xl text-xs font-bold border transition-all cursor-pointer disabled:opacity-50"
+                  [ngClass]="{
+                    'bg-emerald-50 text-emerald-700 border-emerald-300 active:bg-emerald-100': day.isOpen,
+                    'bg-gray-100 text-gray-600 border-gray-300 active:bg-gray-200': !day.isOpen
+                  }"
+                >
+                  @if (savingDayOfWeek() === day.dayOfWeek) {
+                    <svg class="animate-spin h-3.5 w-3.5" fill="none" viewBox="0 0 24 24">
+                      <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                      <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
+                    </svg>
+                  } @else {
+                    <span>{{ day.isOpen ? '🟢' : '🔴' }}</span>
+                  }
+                  <span>Stato: {{ day.isOpen ? 'APERTO' : 'CHIUSO' }}</span>
+                </button>
+
+                <!-- Toggle Weekend -->
+                <button
+                  type="button"
+                  (click)="toggleDayWeekend(day)"
+                  [disabled]="savingDayOfWeek() === day.dayOfWeek"
+                  class="w-full inline-flex items-center justify-center gap-2 px-3 py-2.5 rounded-xl text-xs font-bold border transition-all cursor-pointer disabled:opacity-50"
+                  [ngClass]="{
+                    'bg-purple-50 text-purple-700 border-purple-300 active:bg-purple-100': day.isWeekend,
+                    'bg-amber-50 text-amber-700 border-amber-300 active:bg-amber-100': !day.isWeekend
+                  }"
+                >
+                  @if (savingDayOfWeek() === day.dayOfWeek) {
+                    <svg class="animate-spin h-3.5 w-3.5" fill="none" viewBox="0 0 24 24">
+                      <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                      <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
+                    </svg>
+                  } @else {
+                    <span>{{ day.isWeekend ? '🎉' : '⏱️' }}</span>
+                  }
+                  <span>Orario: {{ day.isWeekend ? 'Weekend (22:30)' : 'Normale (21:30)' }}</span>
+                </button>
+              </div>
+            </div>
+          } @empty {
+            <div class="bg-white rounded-2xl p-8 text-center text-gray-500 border border-gray-200">
+              Nessun giorno di apertura configurato.
+            </div>
+          }
+        </div>
+      </div>
+    }
+
+  </div>
+</div>
+
+<!-- COMPONENTE DI MODIFICA / AGGIUNTA -->
+@if (isModalOpen()) {
+  <app-gestione-modifica
+    [mode]="modalMode()"
+    [type]="modalType()"
+    [pizza]="selectedPizza()"
+    [ingredient]="selectedIngredient()"
+    [generatedId]="modalType() === 'pizza' ? nextPizzaId() : nextIngredientId()"
+    [availableCategories]="modalType() === 'pizza' ? pizzaCategories() : ingredientCategories()"
+    (save)="onItemSaved($event)"
+    (close)="onModalClose()"
+  />
+}
+
+<!-- DIALOG DI CONFERMA ELIMINAZIONE -->
+@if (deleteDialog()) {
+  <div class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-fade-in">
+    <div class="bg-white rounded-2xl shadow-xl max-w-md w-full p-6 space-y-4 border border-gray-100">
+      <div class="w-12 h-12 rounded-full bg-red-100 text-red-600 flex items-center justify-center mx-auto text-xl">
+        ⚠️
+      </div>
+      <div class="text-center space-y-2">
+        <h3 class="text-lg font-bold text-gray-900">
+          Conferma Eliminazione
+        </h3>
+        <p class="text-sm text-gray-600">
+          Sei sicuro di voler eliminare definitivamente
+          <strong>"{{ deleteDialog()?.name }}"</strong> (ID: {{ deleteDialog()?.id }}) da Firestore?
+        </p>
+        <p class="text-xs text-red-500 font-medium">
+          Questa azione è irreversibile.
+        </p>
+      </div>
+
+      <div class="flex items-center justify-center gap-3 pt-2">
+        <button
+          type="button"
+          (click)="closeDeleteDialog()"
+          [disabled]="isDeleting()"
+          class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-xl transition-colors cursor-pointer"
+        >
+          Annulla
+        </button>
+        <button
+          type="button"
+          (click)="confirmDelete()"
+          [disabled]="isDeleting()"
+          class="px-5 py-2 text-sm font-semibold text-white bg-red-600 hover:bg-red-700 rounded-xl shadow-md shadow-red-500/20 active:scale-[0.98] transition-all flex items-center gap-2 cursor-pointer disabled:opacity-50"
+        >
+          @if (isDeleting()) {
+            <svg class="animate-spin h-4 w-4 text-white" fill="none" viewBox="0 0 24 24">
+              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
+            </svg>
+            <span>Eliminazione...</span>
+          } @else {
+            <span>Elimina Definitivamente</span>
+          }
+        </button>
+      </div>
+    </div>
+  </div>
+}

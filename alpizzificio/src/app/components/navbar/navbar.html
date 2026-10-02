@@ -18,7 +18,25 @@
     </li>
     <li><a routerLink="/chi-siamo">Chi Siamo</a></li>
     <li><a routerLink="/riepilogo">Riepilogo</a></li>
+    @if (isAdmin()) {
+      <li>
+        <a routerLink="/gestione" class="text-orange-500 font-bold hover:text-orange-600 transition-colors">
+          ⚙️ Gestione
+        </a>
+      </li>
+    }
   </ul>
+
+  <!-- Auth buttons desktop -->
+  <div class="navbar-auth">
+    @if (user()) {
+      <span class="navbar-user-name">{{ user()?.displayName }}</span>
+      <button class="navbar-logout-btn" (click)="logout()">Esci</button>
+    } @else {
+      <a routerLink="/login" class="navbar-login-btn">Accedi</a>
+      <a routerLink="/register" class="navbar-register-btn">Registrati</a>
+    }
+  </div>
 </nav>
 
 <!-- Burger mobile icon -->
@@ -34,16 +52,16 @@
 <!-- Sidebar mobile -->
 <aside class="mobile-sidebar" [class.open]="menuOpen">
   <button class="close-btn" (click)="toggleMenu()">&times;</button>
-  <div class="mobile-sidebar__header">
-    <img src="/logo.png" alt="Logo" class="mobile-sidebar__logo" />
-    <span class="mobile-sidebar__title">AlPizzificio 77</span>
+  <div class="flex items-center gap-2.5 px-6 pt-5 pb-4 mt-4 border-b border-white/15 shrink-0">
+    <img src="/logo.png" alt="Logo" class="h-9 w-auto drop-shadow" />
+    <span class="text-lg font-extrabold tracking-wide text-white drop-shadow">AlPizzificio 77</span>
   </div>
   <ul>
     <li><a routerLink="" (click)="toggleMenu()">Home</a></li>
     <li class="mobile-menu-item--has-sub">
       <div class="mobile-menu-item__header">
         <a routerLink="/menu" (click)="toggleMenu()">Menu</a>
-        <span class="mobile-menu-item__spacer" (click)="mobileMenuExpanded = !mobileMenuExpanded"></span>
+        <span class="flex-1 self-stretch cursor-pointer" (click)="mobileMenuExpanded = !mobileMenuExpanded"></span>
         <span class="mobile-menu-chevron" [class.mobile-menu-chevron--open]="mobileMenuExpanded" (click)="mobileMenuExpanded = !mobileMenuExpanded">&#8250;</span>
       </div>
       @if (mobileMenuExpanded) {
@@ -56,5 +74,25 @@
     </li>
     <li><a routerLink="/chi-siamo" (click)="toggleMenu()">Chi Siamo</a></li>
     <li><a routerLink="/riepilogo" (click)="toggleMenu()">Riepilogo</a></li>
+    @if (isAdmin()) {
+      <li>
+        <a routerLink="/gestione" (click)="toggleMenu()" class="text-orange-500 font-bold">
+          ⚙️ Gestione Menu
+        </a>
+      </li>
+    }
   </ul>
+
+  <!-- Auth section mobile -->
+  <div class="mobile-sidebar__auth">
+    @if (user()) {
+      <div class="flex flex-col gap-2">
+        <span class="text-white/90 font-semibold text-sm">{{ user()?.displayName }}</span>
+        <button class="w-full text-white bg-red-500 hover:bg-red-600 font-semibold py-2.5 px-4 rounded-md border-2 border-red-500 transition text-sm cursor-pointer" (click)="logout()">Esci</button>
+      </div>
+    } @else {
+      <a routerLink="/login" class="block mb-2 text-white bg-white/15 hover:bg-white/25 font-semibold py-2.5 px-4 rounded-md border-2 border-white/50 text-center text-sm transition" (click)="toggleMenu()">Accedi</a>
+      <a routerLink="/register" class="block text-gray-800 bg-amber-400 hover:bg-amber-500 font-semibold py-2.5 px-4 rounded-md border-2 border-amber-400 text-center text-sm transition" (click)="toggleMenu()">Registrati</a>
+    }
+  </div>
 </aside>
