@@ -266,8 +266,8 @@ export class Summary implements OnInit {
       this.metodoPagamento()
     );
 
-    const conferma = window.confirm('Inviare l\'ordine via WhatsApp?');
-    if (conferma) {
+    // const conferma = window.confirm('Inviare l\'ordine via WhatsApp?');
+    // if (true) {
       const deliveryAddress = this.ritiraDaNoi() ? 'Ritiro in sede' : this.indirizzo();
       const notes = `Nominativo: ${this.nominativo()}\nOrario: ${this.fasciaOraria()}\nPagamento: ${this.metodoPagamento() === 'pos' ? 'POS' : 'Contanti'}\n${this.note()}`;
 
@@ -283,8 +283,8 @@ export class Summary implements OnInit {
       const messaggioEncodato = encodeURIComponent(msg);
       const urlWhatsApp = `https://wa.me/${numeroWhatsApp}?text=${messaggioEncodato}`;
       window.open(urlWhatsApp, '_blank');
-      window.alert('✓ Ordine salvato e inviato a presto!');
-    }
+      window.alert('✓ Assiccurarsi di aver inviato l\'ordine via whatsapp, grazie e a presto!');
+    // }
   }
 
   private async validateCart(): Promise<boolean> {

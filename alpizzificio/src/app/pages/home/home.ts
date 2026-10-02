@@ -1,6 +1,8 @@
 import { Component, OnInit, OnDestroy, NgZone } from '@angular/core';
 import { Meta, Title } from '@angular/platform-browser';
 import { Menu } from "../menu/menu";
+import { FirestoreService } from '../../services/firestore.service';
+import { OpeningDay } from '../../models/index';
 
 @Component({
   selector: 'app-home',
@@ -14,12 +16,50 @@ export class Home implements OnInit, OnDestroy {
   displaySlides = [this.realSlides[this.realSlides.length - 1], ...this.realSlides, this.realSlides[0]];
   currentSlide = 1; // start at first real slide (index 1)
   transitioning = true;
+  days: OpeningDay[] = [];
+  todayOpening: OpeningDay | null = null;
+  openingStatusLabel = 'Stato apertura';
+  closureMessage = 'Oggi siamo aperti e ti aspettiamo!';
+
   private autoPlayInterval: ReturnType<typeof setInterval> | null = null;
 
-  constructor(private title: Title, private meta: Meta, private ngZone: NgZone) {}
+  constructor(
+    private title: Title,
+    private meta: Meta,
+    private ngZone: NgZone,
+    private firestoreService: FirestoreService
+  ) {}
 
   get activeRealIndex(): number {
     return (this.currentSlide - 1 + this.realSlides.length) % this.realSlides.length;
+  }
+
+  private updateClosureState(): void {
+    const todayOfWeek = new Date().getDay();
+    this.todayOpening = this.days.find(day => day.dayOfWeek === todayOfWeek) ?? null;
+
+    if (!this.days.length) {
+      this.openingStatusLabel = 'Stato apertura';
+      this.closureMessage = 'Stato apertura non disponibile al momento.';
+      return;
+    }
+
+    if (this.todayOpening && !this.todayOpening.isOpen) {
+      const closedDays = this.days
+        .filter(day => !day.isOpen)
+        .map(day => day.dayName)
+        .join(', ');
+
+      this.openingStatusLabel = 'Chiusura odierna';
+      this.closureMessage = `Oggi siamo chiusi${this.todayOpening.dayName ? `: ${this.todayOpening.dayName}` : ''}.`;
+      if (closedDays) {
+        this.closureMessage += ` Giorni di chiusura: ${closedDays}.`;
+      }
+      return;
+    }
+
+    this.openingStatusLabel = 'Stato apertura';
+    this.closureMessage = 'Oggi siamo aperti e ti aspettiamo!';
   }
 
   ngOnInit(): void {
@@ -29,7 +69,21 @@ export class Home implements OnInit, OnDestroy {
     this.meta.updateTag({ property: 'og:description', content: 'Pizza artigianale con farina Tipo 1 macinata a pietra e lievitazione lenta. Consegna calda a domicilio con la Red Box.' });
     this.meta.updateTag({ property: 'og:url', content: 'https://www.alpizzificio77.it/' });
     this.meta.updateTag({ name: 'robots', content: 'index, follow' });
-    this.startAutoPlay();
+
+    this.days = this.firestoreService.DEFAULT_OPENING_DAYS;
+    this.updateClosureState();
+
+    this.firestoreService.getOpeningDays().subscribe({
+      next: (openingDays) => {
+        this.days = openingDays;
+        this.updateClosureState();
+      },
+      error: (err) => {
+        console.warn('Errore caricamento apertura oggi:', err);
+      }
+    });
+
+    setTimeout(() => this.startAutoPlay(), 0);
   }
 
   ngOnDestroy(): void {
